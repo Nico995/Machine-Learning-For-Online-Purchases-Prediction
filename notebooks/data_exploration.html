@@ -94,6 +94,11 @@
   </a>
  </li>
  <li class="toctree-l1">
+  <a class="reference internal" href="../data_preparation.html">
+   Data Preparation
+  </a>
+ </li>
+ <li class="toctree-l1">
   <a class="reference internal" href="../appendix.html">
    Appendix
   </a>
@@ -232,6 +237,11 @@
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#correlation">
    Correlation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#class-imbalance">
+   Class imbalance
   </a>
  </li>
 </ul>
@@ -635,7 +645,7 @@ For visualizations instead, we will exploit <strong>matplotlib</strong> and <str
     
     <span class="c1"># Special day is actually discrete</span>
     <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;SpecialDay&quot;</span><span class="p">:</span>
-        <span class="n">sns</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;Revenue&quot;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&quot;muted&quot;</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;Revenue&quot;</span><span class="p">,</span> <span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
 
         <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
@@ -645,7 +655,12 @@ For visualizations instead, we will exploit <strong>matplotlib</strong> and <str
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/data_exploration_12_0.png" src="../_images/data_exploration_12_0.png" />
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">  File</span><span class="nn"> &quot;&lt;ipython-input-6-0576e5cd07b4&gt;&quot;</span><span class="gt">, line </span><span class="mi">13</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;Revenue&quot;</span><span class="p">,</span> <span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                                                     <span class="o">^</span>
+<span class="ne">SyntaxError</span>: invalid syntax
+</pre></div>
+</div>
 </div>
 </div>
 <div class="cell docutils container">
@@ -774,7 +789,7 @@ For visualizations instead, we will exploit <strong>matplotlib</strong> and <str
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/data_exploration_15_0.png" src="../_images/data_exploration_15_0.png" />
+<img alt="../_images/data_exploration_15_01.png" src="../_images/data_exploration_15_01.png" />
 </div>
 </div>
 </div>
@@ -801,7 +816,7 @@ For visualizations instead, we will exploit <strong>matplotlib</strong> and <str
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/data_exploration_18_0.png" src="../_images/data_exploration_18_0.png" />
+<img alt="../_images/data_exploration_18_01.png" src="../_images/data_exploration_18_01.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1125,6 +1140,27 @@ For visualizations instead, we will exploit <strong>matplotlib</strong> and <str
 </pre></div>
 </div>
 <img alt="../_images/data_exploration_32_1.png" src="../_images/data_exploration_32_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="class-imbalance">
+<h2>Class imbalance<a class="headerlink" href="#class-imbalance" title="Permalink to this headline">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Revenue_str&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Revenue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;str&#39;</span><span class="p">)</span>
+
+<span class="n">fg</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">displot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;Revenue_str&#39;</span> <span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">discrete</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;Revenue_str&#39;</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&quot;muted&quot;</span><span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">-</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Revenue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Revenue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Revenue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Revenue&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="n">fg</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Revenue&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Revenue_str&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/data_exploration_34_0.png" src="../_images/data_exploration_34_0.png" />
 </div>
 </div>
 </div>

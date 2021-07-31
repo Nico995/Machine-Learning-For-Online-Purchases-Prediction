@@ -53,7 +53,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Data Exploration" href="data_exploration.html" />
+    <link rel="prev" title="Data Preparation" href="data_preparation.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -94,6 +94,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="data_exploration.html">
    Data Exploration
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="data_preparation.html">
+   Data Preparation
   </a>
  </li>
  <li class="toctree-l1 current active">
@@ -284,6 +289,31 @@
    </span>
    test for Statistical Independence
   </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#oversampling">
+   3. Oversampling
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smote-for-continuous-values">
+     3.1.
+     <strong>
+      SMOTE
+     </strong>
+     for continuous values
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smote-for-categorical-values">
+     3.2.
+     <strong>
+      SMOTE
+     </strong>
+     for categorical values
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -773,6 +803,85 @@ p-value:		0.0012
 </div>
 <p>Since our p-value is smaller than the <span class="math notranslate nohighlight">\(\alpha\)</span> we decided, we end up rejecting the <span class="math notranslate nohighlight">\(H_0\)</span>, hence, the two random variables are <strong>NOT</strong> independent.</p>
 </div>
+<div class="section" id="oversampling">
+<h2>3. Oversampling<a class="headerlink" href="#oversampling" title="Permalink to this headline">¶</a></h2>
+<p>The two most commin oversampling techinques are <strong>SMOTE</strong> and <strong>ADASYN</strong>.
+Both techniques are based on the same oversampling algorithm:</p>
+<div class="math notranslate nohighlight">
+\[{\displaystyle x_{new} = x_i + \lambda \times (x_{zi} - x_i)}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(x_{new}\)</span> is the newly generated point</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_i\)</span> is a point from the orginal dataset</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_{zi}\)</span> is the <span class="math notranslate nohighlight">\(z_{th}\)</span> nearest neighbor of <span class="math notranslate nohighlight">\(x_i\)</span></p></li>
+</ul>
+<p>We are basically finding a new point as an interpolation of each point and one of it’s nearest neighbors.
+The main issue is that approach only works with continuous features.
+Since we are required to deal with continuous features <em>as well as</em> categorical features, we have to choose SMOTE, since ADASYN does not offer any solutions for the problem.</p>
+<div class="section" id="smote-for-continuous-values">
+<h3>3.1. <strong>SMOTE</strong> for continuous values<a class="headerlink" href="#smote-for-continuous-values" title="Permalink to this headline">¶</a></h3>
+<p>As we just said, SMOTE for contiuous values is pretty straight forward:</p>
+<ol class="simple">
+<li><p>Determine the oversampling ratio for each point in the minority class</p></li>
+<li><p>For each minority point:</p>
+<ol class="simple">
+<li><p>Find <span class="math notranslate nohighlight">\(k\)</span> nearest neighbors</p></li>
+<li><p>Choose <span class="math notranslate nohighlight">\(n\)</span> of the <span class="math notranslate nohighlight">\(k\)</span> neighbors and compute the new point coordinates</p></li>
+<li><p>Add the new points to the dataset</p></li>
+</ol>
+</li>
+</ol>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create fake data</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.41</span><span class="p">,</span> <span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.2</span><span class="p">,</span> <span class="mf">3.21</span><span class="p">,</span> <span class="mf">3.65</span><span class="p">,</span> <span class="mf">3.52</span><span class="p">,</span> <span class="mf">3.51</span><span class="p">,</span> <span class="mf">3.51</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">,</span> <span class="mf">3.3</span><span class="p">]</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Majority&#39;</span><span class="p">,</span> <span class="s1">&#39;Majority&#39;</span><span class="p">]</span>
+<span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">l</span> <span class="o">=</span> <span class="mf">0.7</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="n">a</span><span class="p">})</span>
+
+<span class="c1"># Build the new interpolated point</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+    <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">l</span> <span class="o">*</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">]),</span>  
+     <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">l</span> <span class="o">*</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]),</span>
+     <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="s1">&#39;New&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="n">size</span> <span class="o">=</span> <span class="mi">500000</span>
+<span class="c1"># Draw the neighbourhood</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">==</span><span class="mf">0.4</span><span class="p">],</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Draw the interpolation line</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">]],</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">5</span><span class="p">]],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Draw points</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&quot;tab10&quot;</span><span class="p">)</span>
+
+<span class="c1"># Some text</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">-</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="s2">&quot;$x_i$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">0.035</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;$x_</span><span class="si">{zi}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="s2">&quot;$x_</span><span class="si">{new}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/appendix_15_0.png" src="_images/appendix_15_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="smote-for-categorical-values">
+<h3>3.2. <strong>SMOTE</strong> for categorical values<a class="headerlink" href="#smote-for-categorical-values" title="Permalink to this headline">¶</a></h3>
+<p>Since it is not possible to interpolate categorical features, we can extend SMOTE to deal with this kind of data.
+The way the <em>imblearn</em> library does it is by adopting a <em>majority voting</em> technique among the k nearest neighbors of any given point.
+This way, for any point <span class="math notranslate nohighlight">\(x\)</span> having a categorical feature <span class="math notranslate nohighlight">\(j\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[{\displaystyle x_{new}^{j} = \underset {k\in K}{\operatorname {arg\,max} }\,x_k^j}\]</div>
+</div>
+</div>
 </div>
 
     <script type="text/x-thebe-config">
@@ -800,7 +909,7 @@ p-value:		0.0012
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="data_exploration.html" title="previous page">Data Exploration</a>
+    <a class='left-prev' id="prev-link" href="data_preparation.html" title="previous page">Data Preparation</a>
 
         </div>
         

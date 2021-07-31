@@ -18,8 +18,7 @@ kernelspec:
 The first step in any Machine Learning pipeline is to get an idea of the data we are going to work with, and its properties. To do so we will use **pandas** library.
 For visualizations instead, we will exploit **matplotlib** and **seaborn** libraries
 
-```{code-cell}
-
+```{code-cell} ipython3
 import pandas as pd
 df = pd.read_csv("dataset/online_shoppers_intention.csv")
 ```
@@ -40,7 +39,7 @@ Our dataset is composed of 10 Numerical and 8 Categorical Features:
 |**PageValues**|Average page value of the pages visited by the user (Indicates how much is a web page worth in money)|
 |**SpecialDay**|Closeness of the visit time to a special day (e.g., Mother's Day, Prime Day)|
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
 
 numerical_columns = ["Administrative","Administrative_Duration","Informational","Informational_Duration","ProductRelated","ProductRelated_Duration","BounceRates","ExitRates","PageValues","SpecialDay"]
@@ -62,7 +61,7 @@ df[numerical_columns].describe()
 
 The table below shows the amount of unique values for each categorical column
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
 
 categorical_columns = ["OperatingSystems", "Browser", "Region", "TrafficType", "VisitorType", "Weekend", "Month", "Revenue"]
@@ -71,8 +70,7 @@ pd.DataFrame(df[categorical_columns].nunique(), columns=["Uniques"]).transpose()
 
 ## Missing values
 
-
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
 
 pd.DataFrame(df.isnull().sum(), columns=["Missings"]).transpose()
@@ -84,8 +82,9 @@ Lucky for us, we do not have to deal with any missing value.
 
 In order to better understand our (numerical) data, let's have a look at the Violin plots.
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_style("darkgrid")
@@ -143,8 +142,9 @@ Where:
 
 In this formula we basically replace the population variance and expected values with sample statistics
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
+
 import numpy as np
 numerical_columns = ["Administrative","Administrative_Duration","Informational","Informational_Duration","ProductRelated","ProductRelated_Duration","BounceRates","ExitRates","PageValues"]
 
@@ -166,8 +166,9 @@ We can clearly see that the heatmap is (as expected) highlighting the linear cor
 For categorical variables, we can not use the classic correlation coefficient as it does not make any sense.
 For this reason, in order to study the dependence of our categorical variable, we perform a *Pearson's $\chi^2$ test of independence*, where we thest the *null hypothesis* that our data is *Independent*.
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
+
 from matplotlib.colors import LinearSegmentedColormap
 from scipy.stats import chi2_contingency, chi2
 from itertools import product
@@ -217,7 +218,65 @@ plt.show()
 
 The above results are obtained with a 0.99 confidence interval, and they show that the only non dependent pair of features are *Region* and *Weekend*.
 
-
 ```{tip}
-To know more about Violin Plots and what's really behind it, have a look at the Appendix, or click [here](appendix:chi-squared)
+To know more about chi-squared tests and what's really behind it, have a look at the Appendix, or click [here](appendix:chi-squared)
+```
+
+## Class Balance
+
+For classification problems class imbalance can have a negative impact on the prediction performance of our model.
+For this reason is necessary to have an idea whether our samples are evenly distributed among our classes:
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+df['Revenue_str'] = df['Revenue'].astype('int').astype('str')
+
+fg = sns.displot(x='Revenue_str' ,data=df, discrete=True, bins=[0, 1], hue='Revenue_str', legend=False, palette="muted")
+fg.axes[0][0].text(-0.15, df['Revenue'].eq(0).sum()//2-200, f"{df['Revenue'].eq(0).sum()*100/df.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].text(1-0.15, df['Revenue'].eq(1).sum()//2-200, f"{df['Revenue'].eq(1).sum()*100/df.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].set_xlabel('Revenue')
+plt.tight_layout()
+plt.show()
+df.drop(columns='Revenue_str');
+```
+
+The problem is clearly unbalanced towards negative samples (sessions without any purchase). This means that we will have to balance the dataset either by using *Oversampling* or *Undersampling* techniques.
+
+The two main oversampling techniques are called SMOTE (Synthetic Monitoring Oversampling TEchnique) and ADASYN (ADAptive SYNthetic), in our analysis we will use SMOTE.
+
+
+
+### Smote
+
+```{code-cell} ipython3
+np.random.seed(42)
+x = np.linspace(-10, -2, 200)
+y = np.linspace(2, 4, 200)
+
+pos_samples = 20
+neg_samples = 100
+
+df = pd.DataFrame(columns=['Feature1', 'Feature2', 'Label'])
+
+for i in range(pos_samples):
+    df = df.append({'Feature1': np.random.choice(x), 'Feature2': np.random.choice(y), 'Label': 'Positive'}, ignore_index=True)
+
+for i in range(neg_samples):
+    df = df.append({'Feature1': np.random.choice(x)+4, 'Feature2': np.random.choice(y), 'Label': 'Negative'}, ignore_index=True)
+
+sns.scatterplot(data=df, x='Feature1', y='Feature2', hue='Label')
+plt.show()
+
+from imblearn.over_sampling import SMOTE
+
+sm = SMOTE(random_state=42, k_neighbors=7)
+feat1_res, feat2_res = sm.fit_resample(df[['Feature1', 'Feature2']], df['Label'])
+
+df_res = pd.DataFrame(columns=['Feature1', 'Feature2', 'Label'])
+df_res[['Feature1', 'Feature2']] = feat1_res
+df_res['Label'] = feat2_res
+
+sns.scatterplot(data=df_res, x='Feature1', y='Feature2', hue='Label')
+plt.show()
 ```

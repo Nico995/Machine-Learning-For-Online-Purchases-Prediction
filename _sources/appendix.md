@@ -328,3 +328,73 @@ plt.show()
 ```
 
 Since our p-value is smaller than the $\alpha$ we decided, we end up rejecting the $H_0$, hence, the two random variables are **NOT** independent.
+
+## 3. Oversampling
+
+The two most commin oversampling techinques are **SMOTE** and **ADASYN**.
+Both techniques are based on the same oversampling algorithm:
+
+$${\displaystyle x_{new} = x_i + \lambda \times (x_{zi} - x_i)}$$
+
+where:
+* $x_{new}$ is the newly generated point
+* $x_i$ is a point from the orginal dataset
+* $x_{zi}$ is the $z_{th}$ nearest neighbor of $x_i$
+
+We are basically finding a new point as an interpolation of each point and one of it's nearest neighbors.
+The main issue is that approach only works with continuous features.
+Since we are required to deal with continuous features *as well as* categorical features, we have to choose SMOTE, since ADASYN does not offer any solutions for the problem.
+
+### 3.1. **SMOTE** for continuous values
+
+As we just said, SMOTE for contiuous values is pretty straight forward:
+
+1. Determine the oversampling ratio for each point in the minority class
+2. For each minority point:
+    1. Find $k$ nearest neighbors
+    2. Choose $n$ of the $k$ neighbors and compute the new point coordinates
+    3. Add the new points to the dataset
+
+```{code-cell}
+:tags: [hide-input]
+# Create fake data
+x = [0.2, 0.4, 0.41, 0.42, 0.6, 0.6, 0.35, 0.58]
+y = [3.2, 3.21, 3.65, 3.52, 3.51, 3.51, 3.6, 3.3]
+c = ['Minority', 'Minority', 'Minority', 'Minority', 'Minority', 'Minority', 'Majority', 'Majority']
+a = [1, 1, 1, 1, 1, 0.4, 1, 1]
+l = 0.7
+
+df = pd.DataFrame({'x': x, 'y': y, 'c': c, 'a': a})
+
+# Build the new interpolated point
+df = df.append(
+    {'x': df.loc[5, 'x'] + l * (df.loc[1, 'x'] - df.loc[5, 'x']),  
+     'y': df.loc[5, 'y'] + l * (df.loc[1, 'y'] - df.loc[5, 'y']),
+     'c': 'New',
+     'a': 1}, ignore_index=True)
+
+fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+
+size = 500000
+# Draw the neighbourhood
+sns.scatterplot(x='x', y='y', data=df[df['a']==0.4], hue='c', s=size, alpha=0.4, ax=ax, linewidth=0, legend=False)
+# Draw the interpolation line
+sns.lineplot(x=[x[1], x[5]], y=[y[1], y[5]], linestyle='--', color='green', ax=ax, legend=False)
+# Draw points
+sns.scatterplot(data=df.drop(5), x='x', y='y', hue='c', s=100, ax=ax, palette="tab10")
+
+# Some text
+ax.text(x[5]-0.03, y[5], "$x_i$", fontsize=20)
+ax.text(x[1]-0.035, y[1], "$x_{zi}$", fontsize=20)
+ax.text(df.iloc[-1]['x']-0.05, df.iloc[-1]['y'], "$x_{new}$", fontsize=20)
+plt.legend()
+plt.show()
+```
+
+### 3.2. **SMOTE** for categorical values
+
+Since it is not possible to interpolate categorical features, we can extend SMOTE to deal with this kind of data.
+The way the *imblearn* library does it is by adopting a *majority voting* technique among the k nearest neighbors of any given point.
+This way, for any point $x$ having a categorical feature $j$:
+
+$${\displaystyle x_{new}^{j} = \underset {k\in K}{\operatorname {arg\,max} }\,x_k^j}$$ 
