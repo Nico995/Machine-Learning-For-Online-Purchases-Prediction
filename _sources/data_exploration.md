@@ -238,45 +238,48 @@ fg.axes[0][0].text(1-0.15, df['Revenue'].eq(1).sum()//2-200, f"{df['Revenue'].eq
 fg.axes[0][0].set_xlabel('Revenue')
 plt.tight_layout()
 plt.show()
-df.drop(columns='Revenue_str');
+
+df = df.drop(columns='Revenue_str');
 ```
 
 The problem is clearly unbalanced towards negative samples (sessions without any purchase). This means that we will have to balance the dataset either by using *Oversampling* or *Undersampling* techniques.
 
-The two main oversampling techniques are called SMOTE (Synthetic Monitoring Oversampling TEchnique) and ADASYN (ADAptive SYNthetic), in our analysis we will use SMOTE.
+The two main oversampling techniques are called SMOTE (Synthetic Monitoring Oversampling TEchnique) and ADASYN (ADAptive SYNthetic).
+Both techniques are based on the same oversampling algorithm:
+
+$${\displaystyle x_{new} = x_i + \lambda \times (x_{zi} - x_i)}$$
 
 
-
-### Smote
+## Smote
 
 ```{code-cell} ipython3
-np.random.seed(42)
-x = np.linspace(-10, -2, 200)
-y = np.linspace(2, 4, 200)
+:tags: [hide-input]
 
-pos_samples = 20
-neg_samples = 100
+from imblearn.over_sampling import SMOTENC
+from sklearn.preprocessing import OrdinalEncoder
 
-df = pd.DataFrame(columns=['Feature1', 'Feature2', 'Label'])
+# Transform categorical to ordinal
+text_columns = ['Month', 'VisitorType', 'Weekend', 'Revenue']
+enc = OrdinalEncoder()
+df[text_columns] = enc.fit_transform(df[text_columns]).astype(int)
 
-for i in range(pos_samples):
-    df = df.append({'Feature1': np.random.choice(x), 'Feature2': np.random.choice(y), 'Label': 'Positive'}, ignore_index=True)
+# get the smote object
+sm = SMOTENC(categorical_features=[c in categorical_columns for c in df.columns], k_neighbors=5, random_state=42)
 
-for i in range(neg_samples):
-    df = df.append({'Feature1': np.random.choice(x)+4, 'Feature2': np.random.choice(y), 'Label': 'Negative'}, ignore_index=True)
+# Resample data
+df_x, df_y = sm.fit_resample(df.drop(columns=['Revenue']), df['Revenue'])
+df_y = pd.DataFrame({'Revenue': df_y})
+df_y['Revenue_str'] = df_y['Revenue'].astype('int').astype('str')
 
-sns.scatterplot(data=df, x='Feature1', y='Feature2', hue='Label')
+# Plot class distribution
+fg = sns.displot(x='Revenue_str' ,data=df_y, discrete=True, bins=[0, 1], hue='Revenue_str', legend=False, palette="muted")
+fg.axes[0][0].text(-0.15, df_y['Revenue'].eq(0).sum()//2-200, f"{df_y['Revenue'].eq(0).sum()*100/df_y.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].text(1-0.15, df_y['Revenue'].eq(1).sum()//2-200, f"{df_y['Revenue'].eq(1).sum()*100/df_y.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].set_xlabel('Revenue')
+plt.tight_layout()
 plt.show()
+```
 
-from imblearn.over_sampling import SMOTE
-
-sm = SMOTE(random_state=42, k_neighbors=7)
-feat1_res, feat2_res = sm.fit_resample(df[['Feature1', 'Feature2']], df['Label'])
-
-df_res = pd.DataFrame(columns=['Feature1', 'Feature2', 'Label'])
-df_res[['Feature1', 'Feature2']] = feat1_res
-df_res['Label'] = feat2_res
-
-sns.scatterplot(data=df_res, x='Feature1', y='Feature2', hue='Label')
-plt.show()
+```{tip}
+To know more about SMOTE and oversampling and what’s really behind it, have a look at the Appendix, or click [here](appendix:oversampling)
 ```

@@ -23,7 +23,7 @@ Violin plots are a powerful tool that puts together the information from *Box pl
 
 ### 1.1. Example
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
 
 import matplotlib.pyplot as plt
@@ -51,7 +51,7 @@ Box plots are used to depict numerical data through their quartiles.
 
 ##### 1.2.1.1. example
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
 
 np.random.seed(42)
@@ -124,8 +124,9 @@ Kernel Density Estimation Plots represent an **estimated probability density fun
 
 ##### 1.2.2.1. Example
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
+
 from scipy.stats import norm
 import scipy as sp
 
@@ -222,9 +223,9 @@ The way we use Pearson's chi-squared test to test for statistical independence i
 
 Suppose to have data from 1000 athletes concerning the brand of their shoes, and the final place. Both features are categorical, and suppose they are encoded ordinally.
 
-
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
+
 import pandas as pd
 
 df_fake = pd.DataFrame(columns=["shoes", "podium"])
@@ -261,8 +262,9 @@ df_fake
 Our *observation* is made up of two values (one for *shoes* and one for *podium*), and we want our *$H_0$* to say that **the two random variables are statistically independent**.
 To carry on the test we must compute the *contingency table*, counting each occurrence for each pair of values.
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
+
 data_crosstab = pd.crosstab(df_fake['shoes'], df_fake['podium'])
 data_crosstab
 ```
@@ -281,8 +283,10 @@ Where:
 * ${\displaystyle p_{{\cdot j}}={\frac {O_{{\cdot j}}}{N}}=\sum _{{i=1}}^{r}{\frac {O_{{i,j}}}{N}}}$ is the fraction of observations ignoring the row attribute
 
 Now we
-```{code-cell}
+
+```{code-cell} ipython3
 :tags: [hide-input]
+
 from scipy.stats import chi2_contingency
 
 chi_stat, p, dof, expected = chi2_contingency(data_crosstab)
@@ -297,9 +301,9 @@ $$\chi ^{2}=\sum _{{i=1}}^{{r}}\sum _{{j=1}}^{{c}}{(O_{{i,j}}-E_{{i,j}})^{2} \ov
 
 We then choose a significance of 0.95 for our test ($\alpha = 0.5$), and draw the distribution with the significance level and the statistics value
 
-
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
+
 from scipy.stats import chi2
 plt.figure(figsize=(12, 9))
 
@@ -329,9 +333,12 @@ plt.show()
 
 Since our p-value is smaller than the $\alpha$ we decided, we end up rejecting the $H_0$, hence, the two random variables are **NOT** independent.
 
++++
+
+(appendix:oversampling)=
 ## 3. Oversampling
 
-The two most commin oversampling techinques are **SMOTE** and **ADASYN**.
+The two most common oversampling techniques are **SMOTE** and **ADASYN**.
 Both techniques are based on the same oversampling algorithm:
 
 $${\displaystyle x_{new} = x_i + \lambda \times (x_{zi} - x_i)}$$
@@ -355,8 +362,9 @@ As we just said, SMOTE for contiuous values is pretty straight forward:
     2. Choose $n$ of the $k$ neighbors and compute the new point coordinates
     3. Add the new points to the dataset
 
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
+
 # Create fake data
 x = [0.2, 0.4, 0.41, 0.42, 0.6, 0.6, 0.35, 0.58]
 y = [3.2, 3.21, 3.65, 3.52, 3.51, 3.51, 3.6, 3.3]
@@ -395,6 +403,223 @@ plt.show()
 
 Since it is not possible to interpolate categorical features, we can extend SMOTE to deal with this kind of data.
 The way the *imblearn* library does it is by adopting a *majority voting* technique among the k nearest neighbors of any given point.
-This way, for any point $x$ having a categorical feature $j$:
 
-$${\displaystyle x_{new}^{j} = \underset {k\in K}{\operatorname {arg\,max} }\,x_k^j}$$ 
++++
+
+## 4. Learning Theory
+
++++
+
+In order to understand the meaning behind some procedures like *Training-Test Data Split* or *Cross Validation* we must give a brief introduction to some basic concepts of learning theory.
+
++++
+
+### 4.1 Statistical Learning Framework
+
+Let's start by defining some important terms that we will need in the following chapters:
+
+* Learner: The Machine Learning algorithm
+* Domain set: The set of observations that we want to label $\mathcal{X}$ (in our case, the set of session recorded)
+* Label set: The set of possible labels $\mathcal{Y}$ (in our case, $\{0, 1\}$)
+* Training data: A finite sequence of labeled domain points $\displaystyle S = \left( \left(  \mathcal{x}_1, \mathcal{y}_1 \right) \dots \left( \mathcal{x}_m, \mathcal{y}_m \right) \right)$
+* Training data: A finite sequence of labeled domain points $S = \left( \left(  \mathcal{x}_1, \mathcal{y}_1 \right) \dots \left( \mathcal{x}_m, \mathcal{y}_m \right) \right)$
+* Learner's output: The prediction rule obtained by the learner, trained on Training data $\mathcal{h} = \mathcal{X} \rightarrow \mathcal{Y}$ 
+* Data-Generating model: The probability distribution $\mathcal{D}$ underlying $\mathcal{X}$ and the *correct* labelling function $\mathcal{f}\ \text{s.t.}\ \mathcal{f}\left(\mathcal{x}_i\right)=\mathcal{y}_i$
+* Measure of success: The error of a prediction rule $\mathcal{h} = \mathcal{X} \rightarrow \mathcal{Y}$  
+
+$$L_{\mathcal{D}, f}(h) \stackrel{\text { def }}{=} \underset{x \sim \mathcal{D}}{\mathbb{P}}[h(x) \neq f(x)] \stackrel{\text { def }}{=} \mathcal{D}(\{x: h(x) \neq f(x)\})$$
+
+Meaning that the error of $\mathcal{h}$ is the probability of randomly choosing an example $\mathcal{x}$ for which the prediction rule disagrees from the labelling function.
+
+
+### 4.2 The Empirical Risk
+
+The goal of our learner (algorithm) is to find the best predictor $h$. The goodness of the predictor is measured by means of the *error*. The main problem is that the error we just defined depends on the true data distribution $\mathcal{D}$ and the labelling function $\mathcal{f}$, and both are not accessible by the learner.
+
+All that our learner sees is the training set *S*, which works like a small window on the real world $D$ that he will never able to experience. For this reason, we are only able to build an approximation of that error, we call it *Empirical Error (Risk)*
+$$L_{S}(h) \stackrel{\text { def }}{=} \frac{\left|\left\{i \in[m]: h\left(x_{i}\right) \neq y_{i}\right\}\right|}{m}$$
+That is, the ratio of examples in which our rule agrees with with the labelling function. Consequently, we train our learner by minimizing the *Empirical Risk*, a process called **Empirical Risk Minimization (ERM)**
+
+### 4.3 Overfitting
+
+The **ERM** technique, although very intuitive, may lead to overfitting.
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+n_inner_points = 20
+n_outer_points = 40
+np.random.seed(42)
+
+fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+ax.set_xlim((-2, 2))
+ax.set_ylim((-2, 2))
+
+# Outer boundary
+outer_circle = plt.Circle((0, 0), np.sqrt(2), color='b', fill=False, lw=2)
+ax.add_patch(outer_circle)
+# Inner boundary
+inner_circle = plt.Circle((0, 0), 1, color='r', fill=False, lw=2)
+ax.add_patch(inner_circle)
+
+# Plot outer samples
+angle_outer = np.random.rand(1, n_outer_points) * 2 * np.pi
+radius_outer = np.random.rand(1, n_outer_points) * (np.sqrt(2)  - 1) + 1
+ax.scatter(radius_outer * np.cos(angle_outer), radius_outer * np.sin(angle_outer), c='b')
+# Plot inner samples
+angle_inner = np.random.rand(1, n_inner_points) * 2 * np.pi
+radius_inner = np.random.rand(1, n_inner_points)
+ax.scatter(radius_inner * np.cos(angle_inner), radius_inner * np.sin(angle_inner), marker='D', c='r')
+
+plt.axis('off')
+plt.show()
+```
+
+Let's imagine a bivariate dataset, where the $\mathcal{D}$ is the uniform distribution in the blue circle, and the labelling function $\mathcal{f}$ determines the label to be 1 if the sample falls inside the red circle, 0 otherwise. (Note that the area of the red circle is $\pi$ while the area of the blue circle is $2\pi$)
+
+Now consider the predictor:
+
+$$h_{S}(x)= \begin{cases}y_{i} & \text { if } \exists i \in[m] \text { s.t. } x_{i}=x \\ 0 & \text { otherwise. }\end{cases}$$
+
+Which essentially is remembering by heart the training samples, and guessing label 0 for every unknown sample. This predictor has *empirical risk* $L_{\mathcal{S}}(h_s) = 0$, for this reason it can be chosen by an ERM algorighm. But if we take a look at the *true risk* (we can do it only because we built the underlying distribution ourselves) is $L_{\mathcal{D}}(h_s) = \frac{1}{2}$
+
+We have found a predictor that performs perfectly on the training set, and very poorly on the true "world".
+
++++
+
+### 4.4. Recrifying Overfitting
+
+We have just shown that ERM is sensible to overfitting, we will now introduce some conditions to ERM that will guardantee us that if our predictor has good performance on the training set, it is *highly likely* to perform *well* over the underlying data distribution d.
+
+#### 4.4.1 Finite Hypothesis Classes
+A common solution to overfitting is to limit the search space of the ERM. This means choosing an hypothesis class *in advance*, over which the ERM will look for our best predictor *h*
+
+$$h_S = \operatorname{ERM}_{\mathcal{H}}(S) \in \underset{h \in \mathcal{H}}{\operatorname{argmin}} L_{S}(h)$$
+
+We call $\mathcal{H}$ *Hypothesis class*, and our ERM now aims at finding the best $\mathcal{h} \in \mathcal{H}$ that minimizes the $\operatorname{ERM}$. Although this reduces overfitting, we are practically steering our ERM towards a predefinet set of predictors, hence we are introducing a form of bias called *inductive bias*.
+
+#### 4.4.2 Realizability Assumption
+
+$$\exists \mathcal{h}^* \in \mathcal{h}\ \operatorname{s.t.}\ L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h^*\right)=0$$
+
+This means that there always exists an hypothesis in our finite hypothesis set, for which the True Error is zero. This implies
+1. $\mathcal{D}^{\mathcal{m}}\left(S:L_S\left(h^*\right)=0\right)=1$ with probability 1, over the random samples $S$ sampled according to $\mathcal{D}$, labelled by $\mathcal{f}$, we have that the empirical error of $h^*$ equals 0
+2. $L_S\left(h_S\right)=0$ for every ERM hypothesis, the empirical risk equals 0
+
+#### 4.4.3 I.I.D. Assumption
+The samples in the training set are *independently and indentically distributed* according to $\mathcal{D}$
+
+#### 4.4.4 Putting it all together
+Since the training set is random, there is always a (small) probability that our sample is unrepresentative of the underlying $D$, We denote such probability as $\delta$, and call $\left(1-\delta\right)$ the *confidence* of our prediction. Furthermore, since we can not guarantee a perfect prediction, we introduce the *accuracy* $\epsilon$. We now are able to define the failure of our learner as $L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h_S\right) > \epsilon$.
+
+We are now interested in finding an upper bound to the probability of sampling an m-tuple of instances that will lead to faliure in learning a good predictor. The quantity we want to upper bound is
+
+$$\mathcal{D^m}\left(\{ S|_x : L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon\}\right)\tag{1}$$
+
+where $S|_x=\left(x_1, \dots, x_m\right)$ are the instances of the training set.
+
+Let:
+* $\mathcal{H_B}$ be the set of "*bad*" hypothesis $\mathcal{H_B}=\{h \in \mathcal{H}:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon\}$. $\mathcal{H_B}$ is the set of hypothesis that leads to learner's failure (N.B. defined with respect to the **True** error).
+* $M$ be the set of "*misleading*" samples $M=\{S|_x:\exists h \in \mathcal{H}_B, L_S\left(h\right)=0\}$. $M$ is the set of samples, for which a bad hypothesis (high *true* error) has a low *empirical* error.
+
+Recall:
+* We are trying to bound $\mathcal{D^m}\left(\{ S|_x : L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon\}\right)$
+
+Consider:
+* The realizability assumption implies that: $L_S\left(h_S\right)=0$ 
+
+This means that $L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon$ can only happend if for some  $h \in \mathcal{H}_B$ we have $L_S\left(h\right)=0$ (this is because the bad hypothesis will be chosen via ERM only if it has empirical error equals 0 for realizability assumption). We can now say that the event above will only happen if our sample is in the set $M$.
+
+We have shown that:
+$$\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon \} \subseteq M$$
+(meaning that the set of samples for which we have learner's failure is bounded by the size of the set of misleading samples)
+
+Hence:
+$$\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon \}\right) \leq \mathcal{D^m}\left(M\right)\tag{2}$$
+(The probability of picking a sample that brings learner's failure is bounded by the probability of picking a misleading sample)
+
+Consider:
+* The equation $M=\{S|_x:\exists h \in \mathcal{H}_B, L_S\left(h\right)=0\}=\underset{h\in\mathcal{H}_B}{\bigcup}\{S|_x:L_S\left(h\right)=0\}$
+
+Then
+
+$$\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon \}\right)\leq\mathcal{D^m}\left(\underset{h\in\mathcal{H}_B}{\bigcup}\{S|_x:L_S\left(h\right)=0\}\right)\tag{3}$$
+
+Consider:
+* The union bound $\mathcal{D}\left(A \cup B\right) \leq \mathcal{D}\left(A\right) +\mathcal{D}\left(B\right)$
+
+Then
+
+$$\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon \}\right) \leq \underset{h\in\mathcal{H}_B}\sum{\mathcal{D^m}\left(S|_x:L_S\left(h\right)=0\right)}\tag{4}\label{eq:4}$$
+
+Now, let's bound each single summand on the right side.
+
+Fix:
+* $h \in \mathcal{H_B}$
+
+Consider:
+* The event $L_S\left(h\right)=0$ indicates the case where our predictor $h$ always agrees with the true labelling $f$, formally $\forall{i}, h\left(x_i\right)=\mathcal{f}\left(x_i\right)$
+
+Then
+
+$$\mathcal{D^m}\left(S|_x:L_S\left(h\right)=0\right)=\mathcal{D^m}\left(\{S|_x:\forall{i}, h\left(x_i\right)=\mathcal{f}\left(x_i\right)\right\})$$
+
+Consider:
+* The training samples are i.i.d. 
+
+Then 
+$$\mathcal{D^m}\left(\{S|_x:\forall{i}, h\left(x_i\right)=\mathcal{f}\left(x_i\right)\right\})=\underset{i=1}{\overset{m}{\prod}} \mathcal{D}\left(\{\mathcal{x}_i:h\left(\mathcal{x}_i\right)=\mathcal{f}\left(\mathcal{x}_i\right)\}\right)$$
+Remember:
+* The definition of true risk: $L_{\mathcal{D}, f}(h) \stackrel{\text { def }}{=} \mathcal{D}(\{x: h(x) \neq f(x)\})$
+
+Then, for each individual sampling of an element of the training set we have 
+$$\mathcal{D}\left(\{\mathcal{x_i}:h\left(\mathcal{x_i}\right)=\mathcal{y_i}\}\right) = 1 - L_\left(\mathcal{D}, \mathcal{f}\right)\left(h\right) \leq 1 - \epsilon$$
+
+Where the last inequation follows from the fact that our $h \in \mathcal{H_B}$
+
+Consider:
+* the inequality $\left(1 - \epsilon\right)^m \leq e^{-\epsilon m}$
+
+We now have proved that:
+
+$$\mathcal{D^m}\left(S|_x:L_S\left(h\right)=0\right) \leq (1-e)^m \leq e^{-\epsilon m}$$
+
+Now, sostituting back in equation $\left(\ref{eq:4}\right)$ we get
+
+$$\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon \}\right) \leq \left|\mathcal{H_B}\right|e^{-\epsilon m}\tag{5}$$
+
+Consider:
+* $\left|\mathcal{H_B}\right| \leq \left|\mathcal{H}\right|$
+
+$$\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon \}\right) \leq \left|\mathcal{H}\right|e^{-\epsilon m}\tag{6}$$
+
+Now, since what we have on the left-hand side is the probability of learner's failure, we can rewrite the inequality and obtain the probability of "*correctness*"
+
+$$\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)\leq\epsilon \}\right) > \left|\mathcal{H}\right|e^{-\epsilon m}\tag{7}$$
+
+Let 
+* $\delta \in \left(0, 1\right)$ the probability of "*being correct*"
+* $\epsilon > 0$ the amount of "*correctness*"
+
+We have
+
+$$m \geq \frac{\log (|\mathcal{H}| / \delta)}{\epsilon}\tag{8}$$
+
+
+This is an important result since we can now say that for any labelling function $\mathcal{f}$, and for any underlying distribution $\mathcal{D}$, for which the realizability assumption holds, with a probability of at least $1 - \delta$ over the choice of an i.i.d. sample $S$ **of size $m$**, we have that for any $\operatorname{ERM}$ hypothesis $h_S$ it holds that:
+
+$$L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(H_S\right)\leq \epsilon$$
+
+### 4.5. PAC Learning
+
+In the paragraph above we found out that for a finite hypothesis class, if the sample size $m$ of the training set $S$ that we feed to the $\operatorname{ERM}$ in order to find our hypothesis $h_S$ is **big enough**, then our $h_S$ will be **approximately correct**
+
+We can now define PAC Learnability as follows
+
+::::{important}
+A hypothesis class $\mathcal{H}$ is PAC learnable if there exists a function $m_{\mathcal{H}}:(0,1)^{2} \rightarrow \mathbb{N}$ and a learning algorithm that has the following properties $\forall \epsilon,\theta\in\left(0, 1\right), \forall \mathcal{D}\sim\mathcal{X}, \forall \mathcal{f}:\mathcal{X}\rightarrow\left(0, 1\right)$ if the realizability assumption holds w.r.t. $\mathcal{H,D,f}$ then when running the learning algorithm on $m \geq m_\mathcal{H}\left(\epsilon,\theta\right)$ i.i.d. samples generated by $\mathcal{D}$ and labelled by $\mathcal{f}$ the algorighm returns a hypothesis $h$ such that with probability of at least $1-\theta$ (probably) $L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h\right)\leq\epsilon$ (approximately correct)
+::::
+
+```{code-cell} ipython3
+
+```
