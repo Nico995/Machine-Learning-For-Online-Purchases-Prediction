@@ -367,6 +367,16 @@
      4.5. PAC Learning
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#generalizing-the-model-removing-the-realizability-assumption">
+     4.6 Generalizing the model - Removing the Realizability Assumption
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#generalizing-the-model-extending-further-than-binary-classification">
+     4.7 Generalizing the model - Extending further than Binary Classification
+    </a>
+   </li>
   </ul>
  </li>
 </ul>
@@ -1086,14 +1096,16 @@ $<span class="math notranslate nohighlight">\(\mathcal{D^m}\left(\{S|_x:L_{\left
 <ul class="simple">
 <li><p>The training samples are i.i.d.</p></li>
 </ul>
-<p>Then
-$<span class="math notranslate nohighlight">\(\mathcal{D^m}\left(\{S|_x:\forall{i}, h\left(x_i\right)=\mathcal{f}\left(x_i\right)\right\})=\underset{i=1}{\overset{m}{\prod}} \mathcal{D}\left(\{\mathcal{x}_i:h\left(\mathcal{x}_i\right)=\mathcal{f}\left(\mathcal{x}_i\right)\}\right)\)</span>$
-Remember:</p>
+<p>Then</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D^m}\left(\{S|_x:\forall{i}, h\left(x_i\right)=\mathcal{f}\left(x_i\right)\right\})=\underset{i=1}{\overset{m}{\prod}} \mathcal{D}\left(\{\mathcal{x}_i:h\left(\mathcal{x}_i\right)=\mathcal{f}\left(\mathcal{x}_i\right)\}\right)\]</div>
+<p>Remember:</p>
 <ul class="simple">
 <li><p>The definition of true risk: <span class="math notranslate nohighlight">\(L_{\mathcal{D}, f}(h) \stackrel{\text { def }}{=} \mathcal{D}(\{x: h(x) \neq f(x)\})\)</span></p></li>
 </ul>
-<p>Then, for each individual sampling of an element of the training set we have
-$<span class="math notranslate nohighlight">\(\mathcal{D}\left(\{\mathcal{x_i}:h\left(\mathcal{x_i}\right)=\mathcal{y_i}\}\right) = 1 - L_\left(\mathcal{D}, \mathcal{f}\right)\left(h\right) \leq 1 - \epsilon\)</span>$</p>
+<p>Then, for each individual sampling of an element of the training set we have</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D}\left(\{\mathcal{x_i}:h\left(\mathcal{x_i}\right)=\mathcal{y_i}\}\right) = 1 - L_\left(\mathcal{D}, \mathcal{f}\right)\left(h\right) \leq 1 - \epsilon\]</div>
 <p>Where the last inequation follows from the fact that our <span class="math notranslate nohighlight">\(h \in \mathcal{H_B}\)</span></p>
 <p>Consider:</p>
 <ul class="simple">
@@ -1109,31 +1121,103 @@ $<span class="math notranslate nohighlight">\(\mathcal{D}\left(\{\mathcal{x_i}:h
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\left|\mathcal{H_B}\right| \leq \left|\mathcal{H}\right|\)</span></p></li>
 </ul>
+<p>We conclude that</p>
 <div class="math notranslate nohighlight">
 \[\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \}\right) \leq \left|\mathcal{H}\right|e^{-\epsilon m}\tag{6}\]</div>
-<p>Now, since what we have on the left-hand side is the probability of learner’s failure, we can rewrite the inequality and obtain the probability of “<em>correctness</em>”</p>
-<div class="math notranslate nohighlight">
-\[\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)\leq\epsilon \}\right) &gt; \left|\mathcal{H}\right|e^{-\epsilon m}\tag{7}\]</div>
+<p><strong>—</strong></p>
 <p>Let</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\delta \in \left(0, 1\right)\)</span> the probability of “<em>being correct</em>”</p></li>
-<li><p><span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span> the amount of “<em>correctness</em>”</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{H} be a finite hypothesis class\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\delta \in \left(0, 1\right) \text{and} \epsilon &gt; 0\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(m\)</span> be an integer that satisfies <span class="math notranslate nohighlight">\(m \geq \frac{\log (|\mathcal{H}| / \delta)}{\epsilon}\)</span></p></li>
 </ul>
-<p>We have</p>
-<div class="math notranslate nohighlight">
-\[m \geq \frac{\log (|\mathcal{H}| / \delta)}{\epsilon}\tag{8}\]</div>
-<p>This is an important result since we can now say that for any labelling function <span class="math notranslate nohighlight">\(\mathcal{f}\)</span>, and for any underlying distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>, for which the realizability assumption holds, with a probability of at least <span class="math notranslate nohighlight">\(1 - \delta\)</span> over the choice of an i.i.d. sample <span class="math notranslate nohighlight">\(S\)</span> <strong>of size <span class="math notranslate nohighlight">\(m\)</span></strong>, we have that for any <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> hypothesis <span class="math notranslate nohighlight">\(h_S\)</span> it holds that:</p>
+<p>Then, for any labeling function <span class="math notranslate nohighlight">\(\mathcal{f}\)</span> and for any distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> for which the realizability assumption holds, with probability at least <span class="math notranslate nohighlight">\(1 - \delta\)</span> over the choice of an i.i.d. sample <span class="math notranslate nohighlight">\(S\)</span> of size <span class="math notranslate nohighlight">\(m\)</span>, we have that for every <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> hypothesis <span class="math notranslate nohighlight">\(h_S\)</span>, it holds that</p>
 <div class="math notranslate nohighlight">
 \[L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(H_S\right)\leq \epsilon\]</div>
+<p>The above statements mean that, for a training set of size <span class="math notranslate nohighlight">\(m\)</span> (<em>big enough</em>) and a <strong>finite</strong> hypothesis set <span class="math notranslate nohighlight">\(\mathcal{H}\)</span>, the <span class="math notranslate nohighlight">\(\operatorname{ERM_{\mathcal{H}}}\)</span> rule will be <em>probably</em> (with confindence <span class="math notranslate nohighlight">\(1 - \delta\)</span>) <em>approximately</em> (up to an error <span class="math notranslate nohighlight">\(\epsilon\)</span>) correct.</p>
 </div>
 </div>
 <div class="section" id="pac-learning">
 <h3>4.5. PAC Learning<a class="headerlink" href="#pac-learning" title="Permalink to this headline">¶</a></h3>
-<p>In the paragraph above we found out that for a finite hypothesis class, if the sample size <span class="math notranslate nohighlight">\(m\)</span> of the training set <span class="math notranslate nohighlight">\(S\)</span> that we feed to the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> in order to find our hypothesis <span class="math notranslate nohighlight">\(h_S\)</span> is <strong>big enough</strong>, then our <span class="math notranslate nohighlight">\(h_S\)</span> will be <strong>approximately correct</strong></p>
-<p>We can now define PAC Learnability as follows</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>A hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is PAC learnable if there exists a function <span class="math notranslate nohighlight">\(m_{\mathcal{H}}:(0,1)^{2} \rightarrow \mathbb{N}\)</span> and a learning algorithm that has the following properties <span class="math notranslate nohighlight">\(\forall \epsilon,\theta\in\left(0, 1\right), \forall \mathcal{D}\sim\mathcal{X}, \forall \mathcal{f}:\mathcal{X}\rightarrow\left(0, 1\right)\)</span> if the realizability assumption holds w.r.t. <span class="math notranslate nohighlight">\(\mathcal{H,D,f}\)</span> then when running the learning algorithm on <span class="math notranslate nohighlight">\(m \geq m_\mathcal{H}\left(\epsilon,\theta\right)\)</span> i.i.d. samples generated by <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> and labelled by <span class="math notranslate nohighlight">\(\mathcal{f}\)</span> the algorighm returns a hypothesis <span class="math notranslate nohighlight">\(h\)</span> such that with probability of at least <span class="math notranslate nohighlight">\(1-\theta\)</span> (probably) <span class="math notranslate nohighlight">\(L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h\right)\leq\epsilon\)</span> (approximately correct)</p>
+<p>In the paragraph above we found out that for a finite hypothesis class, if the sample size <span class="math notranslate nohighlight">\(m\)</span> of the training set <span class="math notranslate nohighlight">\(S\)</span> that we feed to the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> in order to find our hypothesis <span class="math notranslate nohighlight">\(h_S\)</span> is <strong>big enough</strong>, then our <span class="math notranslate nohighlight">\(h_S\)</span> will be <strong>probably approximately correct</strong>.</p>
+<p>We can now define PAC Learnability as follows:</p>
+<div class="important admonition">
+<p class="admonition-title">PAC Learning</p>
+<p>A hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is PAC learnable if there exists a function <span class="math notranslate nohighlight">\(m_{\mathcal{H}}:(0,1)^{2} \rightarrow \mathbb{N}\)</span> and a learning algorithm that has the following properties <span class="math notranslate nohighlight">\(\forall \epsilon,\delta\in\left(0, 1\right), \forall \mathcal{D}\sim\mathcal{X}, \forall \mathcal{f}:\mathcal{X}\rightarrow\left(0, 1\right)\)</span> if the realizability assumption holds w.r.t. <span class="math notranslate nohighlight">\(\mathcal{H,D,f}\)</span> then when running the learning algorithm on <span class="math notranslate nohighlight">\(m \geq m_\mathcal{H}\left(\epsilon,\theta\right)\)</span> i.i.d. samples generated by <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> and labelled by <span class="math notranslate nohighlight">\(\mathcal{f}\)</span> the algorighm returns a hypothesis <span class="math notranslate nohighlight">\(h\)</span> such that with probability of at least <span class="math notranslate nohighlight">\(1-\theta\)</span> (probably) <span class="math notranslate nohighlight">\(L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h\right)\leq\epsilon\)</span> (approximately correct)</p>
+</div>
+<p>It is important to note that if <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is PAC learnable, there exists mode than 1 function <span class="math notranslate nohighlight">\(m_H\)</span> that satisfies the requirements for PAC learnability. Therefore, we will redefine the sample complexity to be the minimal integer that satisfies the requirements of PAC learning:</p>
+<div class="math notranslate nohighlight">
+\[m_{\mathcal{H}}(\epsilon, \delta) \leq\left\lceil\frac{\log (|\mathcal{H}| / \delta)}{\epsilon}\right\rceil\]</div>
+</div>
+<div class="section" id="generalizing-the-model-removing-the-realizability-assumption">
+<h3>4.6 Generalizing the model - Removing the Realizability Assumption<a class="headerlink" href="#generalizing-the-model-removing-the-realizability-assumption" title="Permalink to this headline">¶</a></h3>
+<p>The first step towards the generalization of the model is to remove the realizability assumption. Remember, the realizabilty assumption says that <span class="math notranslate nohighlight">\(\exists h^*\in\mathcal{H}:\mathcal{D}\left(\{h_*\left(\mathcal{x}\right)=\mathcal{f}\left(\mathcal{x}\right)\}\right)=1\)</span>. In many real problems, this is not the case. Furthermore, it is also unrealistic to suppose that the labels are fully determined by the labelling function <span class="math notranslate nohighlight">\(\mathcal{f}\)</span>.</p>
+<p>For this reason, from now on, we indicate the probablity distribution over <span class="math notranslate nohighlight">\(\mathcal{X} \times \mathcal{Y}\)</span>, were</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is our domain set as before, <span class="math notranslate nohighlight">\(\mathcal{D_x}\)</span> is the marginal over the unlabeled domain points</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{Y}\)</span> is a set of labels, <span class="math notranslate nohighlight">\(\mathcal{D\left(\left(x, y\right)|x\right)}\)</span> is the conditional over the labels for each domain point</p></li>
+</ul>
+<p>This makes <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> a <em>joint probability distribution</em> over the domain points and the labels.</p>
+<p>We can now rewrite some of the concept that we defined previously:</p>
+<ul class="simple">
+<li><p><strong>True Error</strong>: <span class="math notranslate nohighlight">\(L_\mathcal{D}\left(h\right) \overset{\operatorname{def}}{=} \mathcal{D}\left(\{\left(\mathcal{x, y}\right): h\left(\mathcal{x}\right)\neq\mathcal{y}\}\right)\)</span></p></li>
+<li><p><strong>Empirical Error</strong>: <span class="math notranslate nohighlight">\(L_{S}(h) \stackrel{\text { def }}{=} \frac{\left|\left\{i \in[m]: h\left(x_{i}\right) \neq y_{i}\right\}\right|}{m}\)</span></p></li>
+</ul>
+<p>We can now replace the realizability assumption by considering the following example:</p>
+<p>Given a probability distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> over <span class="math notranslate nohighlight">\(\mathcal{X} \times \{0, 1\}\)</span>, the best label predicting function from <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> to <span class="math notranslate nohighlight">\(\{0, 1\}\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}f_{\mathcal{D}}(x)= \begin{cases}1 &amp; \text { if } \mathbb{P}[y=1 \mid x] \geq 1 / 2 \\ 0 &amp; \text { otherwise }\end{cases}\end{split}\]</div>
+<p>The above classifier is called <em>Bayes classifier</em>, and it is the optimal predictor for every <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>, formally</p>
+<div class="math notranslate nohighlight">
+\[\forall g \ L_\mathcal{D}\left(\mathcal{f_D}\right)\leq L_\mathcal{D}\left(\mathcal{g}\right)\]</div>
+<p>However, the <em>Bayes Risk</em> can not once more be computed, as it depends on <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>. Since we can not hope to find a predictor that has a smaller error than the minimal possible (the one of the Bayes classifier), we require that the learning algorithm will find a predictor whose ierror is <em>not much larger</em> than the best possible error of a predictor <em>in some given benchmark hypothesis class</em></p>
+<div class="important admonition">
+<p class="admonition-title">Agnostic PAC Learning</p>
+<p>A hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is <strong>agnostic</strong> PAC learnable if there exists a function <span class="math notranslate nohighlight">\(m_{\mathcal{H}}:(0,1)^{2} \rightarrow \mathbb{N}\)</span> and a learning algorithm that has the following property: <span class="math notranslate nohighlight">\(\forall \epsilon,\theta\in\left(0, 1\right), \forall \mathcal{D}\sim\mathcal{X}\times\mathcal{Y}\)</span>, when running the learning algorithm on <span class="math notranslate nohighlight">\(m \geq m_\mathcal{H}\left(\epsilon,\delta\right)\)</span> i.i.d. samples generated by <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> the algorighm returns a hypothesis <span class="math notranslate nohighlight">\(h\)</span> such that, with probability of at least <span class="math notranslate nohighlight">\(1-\delta\)</span></p>
+<div class="math notranslate nohighlight">
+\[L_\mathcal{D}\left(h\right)\leq \underset{h^\prime\in\mathcal{H}}{\operatorname{min}} L_\mathcal{D}\left(h^\prime\right) +\epsilon\]</div>
+</div>
+<p>With the above definition we have relaxed the PAC learnable property, by removing the requirement for the learner to have a small error in absolute terms, and compared it to the best learner among the class of predictors that we choose.</p>
+</div>
+<div class="section" id="generalizing-the-model-extending-further-than-binary-classification">
+<h3>4.7 Generalizing the model - Extending further than Binary Classification<a class="headerlink" href="#generalizing-the-model-extending-further-than-binary-classification" title="Permalink to this headline">¶</a></h3>
+<p>The next relaxation we are going to perform over our model concerns the scope of the Learning Problem. To give an idea of what it means, let’s consider some examples of different learning tasks:</p>
+<ul class="simple">
+<li><p>Multiclass Classification: We do not require for our classification to be binary. We could think of document classification, where our <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is the set of all documents, and our <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span> is a large but finite set (e.g. Sport, Polithics, Kitchen, News). Our training sample still looks exactly the same as previously discussed, a finite sequence of pairs <span class="math notranslate nohighlight">\(\mathcal{(x_i, y_i)}\)</span>, and the learner’s output will still be a function <span class="math notranslate nohighlight">\(h_S:\mathcal{X}\rightarrow\mathcal{Y}\)</span>. As a metric we can use the probability, over pairs, that our predictor suggests a wrong label.</p></li>
+<li><p>Regression: In regression, the goal is to find a functional relationship between <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span>. For example, one could want to find a linear function that predicts a child’s weight at birth give some ultrasound measurements (e.g. head circumference, abdominal circumference and femur length). Our <span class="math notranslate nohighlight">\(\mathcal{X} \in \mathbb{R}^3\)</span> and the labels set, is the set of real numbers. Our training data still looks the same even in this task (a pair <span class="math notranslate nohighlight">\(\mathcal{\left(x_i, y_i\right)}\)</span>). However, the measure of success differs. We may evaluate the qualityb of a hypothesis function <span class="math notranslate nohighlight">\(h_S:\mathcal{X}\rightarrow\mathcal{Y}\)</span> using the <em>expected square difference</em> between the true labels and the predictor’s outputs:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[L_\mathcal{D}\left(h\right) \overset{\operatorname{def}}{=} \underset{\mathcal{\left(x, y\right)\sim D}}{\mathbb{E}} \left(h\left(\mathcal{x}\right)-\mathcal{y}\right)^2\]</div>
+<p>For this reason, we generalize our measure of success as follows:</p>
+<div class="important admonition">
+<p class="admonition-title">Generalized Loss Function</p>
+<p>Given any set <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> and some domain <span class="math notranslate nohighlight">\(Z\)</span> let <span class="math notranslate nohighlight">\(l\)</span> be any function <span class="math notranslate nohighlight">\(\ell:\mathcal{H}\times Z \rightarrow \mathbb{R}_+\)</span> we call such functions <em>loss functions</em>. (for classification problems, <span class="math notranslate nohighlight">\(Z=\mathcal{Z\times Y}\)</span>)</p>
+</div>
+<p>We can again rewrite the definitions of true and empirical risk</p>
+<p>We can now rewrite some of the concept that we defined previously:</p>
+<ul class="simple">
+<li><p><strong>True Risk</strong>: <span class="math notranslate nohighlight">\(L_\mathcal{D}\left(h\right) \overset{\operatorname{def}}{=} \underset{\mathcal{z\sim D}}{\mathbb{E}}\left[\ell\left(\mathcal{h, z}\right)\right]\)</span> (The risk is the expected value of the loss)</p></li>
+<li><p><strong>Empirical Error</strong>: <span class="math notranslate nohighlight">\(L_{S}(h) \overset{\operatorname{def}}{=} \frac{1}{m} \overset{m}{\underset{i=1}{\sum}}\ell\mathcal{\left(h,z_i\right)}\)</span> where <span class="math notranslate nohighlight">\(S=\mathcal{\left(z_1,\dots,z_m\right)\in Z_m}\)</span></p></li>
+</ul>
+<p>Let’s now write the loss for classification and regression tasks:</p>
+<ul class="simple">
+<li><p><strong>0-1 Loss</strong></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}\ell_{0-1}(h,(x, y)) \stackrel{\text { def }}{=} \begin{cases}0 &amp; \text { if } h(x)=y \\ 1 &amp; \text { if } h(x) \neq y\end{cases}\end{split}\]</div>
+<ul class="simple">
+<li><p><strong>Square Loss</strong></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\ell_{sq}\left(h, \left(\mathcal{x, y}\right)\right) \overset{\operatorname{def}}{=} \left(h\left(\mathcal{x}\right)-\mathcal{y}\right)^2\]</div>
+<p>To summarize:</p>
+<div class="important admonition">
+<p class="admonition-title">Agnostic PAC Learning for Genearl Loss Functions</p>
+<p>A hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is <strong>agnostic</strong> PAC learnable with respect to a set <span class="math notranslate nohighlight">\(Z\)</span> and a loss function <span class="math notranslate nohighlight">\(\ell:\mathcal{H}\times Z\rightarrow \mathbb{R}_+\)</span> if there exists a function <span class="math notranslate nohighlight">\(m_{\mathcal{H}}:(0,1)^{2} \rightarrow \mathbb{N}\)</span> and a learning algorithm that has the following property: <span class="math notranslate nohighlight">\(\forall \epsilon,\theta\in\left(0, 1\right), \forall \mathcal{D}\sim&gt;\)</span>, when running the learning algorithm on <span class="math notranslate nohighlight">\(m \geq m_\mathcal{H}\left(\epsilon,\delta\right)\)</span> i.i.d. samples generated by <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> the algorighm returns a hypothesis <span class="math notranslate nohighlight">\(h\)</span> such that, with probability of at least <span class="math notranslate nohighlight">\(1-\delta\)</span> (over
+the choice of the m training examples)</p>
+<div class="math notranslate nohighlight">
+\[L_\mathcal{D}\left(h\right)\leq \underset{h^\prime\in\mathcal{H}}{\operatorname{min}} L_\mathcal{D}\left(h^\prime\right) +\epsilon\]</div>
+<p>where <span class="math notranslate nohighlight">\(L_\mathcal{D}\left(h\right) = \mathbb{E}_{\mathcal{z\sim D}}\left[\ell\left(\mathcal{h, z}\right)\right]\)</span></p>
 </div>
 </div>
 </div>
