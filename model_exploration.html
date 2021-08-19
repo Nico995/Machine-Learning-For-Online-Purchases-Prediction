@@ -54,7 +54,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Appendix" href="appendix.html" />
-    <link rel="prev" title="Data Preparation &amp; Classification" href="data_preparation.html" />
+    <link rel="prev" title="Pipelines" href="data_preparation.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -99,7 +99,7 @@
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="data_preparation.html">
-   Data Preparation &amp; Classification
+   Pipelines
   </a>
  </li>
  <li class="toctree-l1 current active">
@@ -222,18 +222,47 @@
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#margin-and-hard-svm">
-     1.1 Margin and Hard-SVM
+    <a class="reference internal nav-link" href="#theory">
+     1.1 Theory
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#margin-and-hard-svm">
+       1.1.1 Margin and Hard-SVM
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#soft-svm">
+       1.1.2 Soft-SVM
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#kernel-trick">
+       1.1.3 Kernel Trick
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#application">
+     1.2 Application
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#trees-and-random-forests">
+   2. Trees and Random Forests
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#growing-a-tree">
+     2.1. Growing a Tree
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#soft-svm">
-     1.2 Soft-SVM
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#kernel-trick">
-     1.3 Kernel Trick
+    <a class="reference internal nav-link" href="#pruning-a-tree">
+     2.2 Pruning a Tree
     </a>
    </li>
   </ul>
@@ -255,8 +284,10 @@
 <div class="section" id="support-vector-machines">
 <h2>1. Support Vector Machines<a class="headerlink" href="#support-vector-machines" title="Permalink to this headline">¶</a></h2>
 <p>This algorithm tries to find a hyperplane that divides the saples living in the feature space, maximizing the minimum distance between the hyperplane itself and the closest point in both resulting halfspaces.</p>
+<div class="section" id="theory">
+<h3>1.1 Theory<a class="headerlink" href="#theory" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="margin-and-hard-svm">
-<h3>1.1 Margin and Hard-SVM<a class="headerlink" href="#margin-and-hard-svm" title="Permalink to this headline">¶</a></h3>
+<h4>1.1.1 Margin and Hard-SVM<a class="headerlink" href="#margin-and-hard-svm" title="Permalink to this headline">¶</a></h4>
 <p>Let <span class="math notranslate nohighlight">\(S = \left(\mathbf{x}_1, \mathcal{y}_1\right)\dots\left(\mathbf{x}_m, \mathcal{y}_m\right)\)</span> be the training set of size m, where each <span class="math notranslate nohighlight">\(\mathbf{x}_i\in\mathbb{R}^d\)</span> and <span class="math notranslate nohighlight">\(\mathcal{y}_i\in\{\pm1\}\)</span>. We say that the training set is linearelt separable, if there exists a halfspace, <span class="math notranslate nohighlight">\(\left(\mathbf{w}, \mathcal{b}\right)\)</span> such that <span class="math notranslate nohighlight">\(y_{i}=\operatorname{sign}\left(\left\langle\mathbf{w}, \mathbf{x}_{i}\right\rangle+b\right)\)</span> for all <span class="math notranslate nohighlight">\(i\)</span>. We can write this condition as:</p>
 <div class="math notranslate nohighlight">
 \[\forall i \in \left[m\right],\ y_i\left(\left\langle\mathbf{w, x_i}\right\rangle+b\right)&gt;0\]</div>
@@ -341,7 +372,7 @@ The last equation can be solved via quadratic programming.</p>
 </div>
 </div>
 <div class="section" id="soft-svm">
-<h3>1.2 Soft-SVM<a class="headerlink" href="#soft-svm" title="Permalink to this headline">¶</a></h3>
+<h4>1.1.2 Soft-SVM<a class="headerlink" href="#soft-svm" title="Permalink to this headline">¶</a></h4>
 <p>In the Hard-SVM settings we made the strong separability assumption, which needs to be relaxed in order to apply SVMs to real data. In order to relax this constraint, we introduce nonnegative slack variables <span class="math notranslate nohighlight">\(\xi_1,\dots,\xi_m\)</span>, and we repace each constraint that was before <span class="math notranslate nohighlight">\(\mathcal{y_i}\left(\left\langle\mathbf{w,x_i}\right\rangle+b\right) \geq 1\)</span> with <span class="math notranslate nohighlight">\(\mathcal{y_i}\left(\left\langle\mathbf{w,x_i}\right\rangle+b\right) \geq 1 - \xi_i\)</span>. <span class="math notranslate nohighlight">\(\xi_i\)</span> measures by how much the constraint <span class="math notranslate nohighlight">\(\mathcal{y_i}\left(\left\langle\mathbf{w,x_i}\right\rangle+b\right) \geq 1\)</span> is being violated. The Soft-SVM rules then writes:</p>
 <div class="important admonition">
 <p class="admonition-title">Soft-SVM rule</p>
@@ -351,7 +382,7 @@ The last equation can be solved via quadratic programming.</p>
 </div>
 </div>
 <div class="section" id="kernel-trick">
-<h3>1.3 Kernel Trick<a class="headerlink" href="#kernel-trick" title="Permalink to this headline">¶</a></h3>
+<h4>1.1.3 Kernel Trick<a class="headerlink" href="#kernel-trick" title="Permalink to this headline">¶</a></h4>
 <p>Note that there exists a dual formulation for the SVM problem:</p>
 <div class="important admonition">
 <p class="admonition-title">Hard-SVM Primal-Dual</p>
@@ -387,6 +418,91 @@ The last equation can be solved via quadratic programming.</p>
 <p>This allows to replace the dot product in the feature space, with the evaluation of <span class="math notranslate nohighlight">\(K\)</span> on the points in the starting representation, making this approach viable computationally.</p>
 </div>
 </div>
+<div class="section" id="application">
+<h3>1.2 Application<a class="headerlink" href="#application" title="Permalink to this headline">¶</a></h3>
+<p>We now use the code we showed in the previous section and perform grid-search cross-validation using the Sklearn’s implementation of the Soft-SVMs.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./dataset/online_shoppers_intention.csv&#39;</span><span class="p">)</span>
+<span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Revenue&#39;</span><span class="p">),</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;Revenue&#39;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.compose</span> <span class="kn">import</span> <span class="n">ColumnTransformer</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span><span class="p">,</span> <span class="n">MinMaxScaler</span><span class="p">,</span> <span class="n">OneHotEncoder</span>
+
+<span class="n">textual_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Month&#39;</span><span class="p">,</span> <span class="s1">&#39;VisitorType&#39;</span><span class="p">,</span> <span class="s1">&#39;Weekend&#39;</span><span class="p">]</span>
+<span class="n">categorical_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Month&#39;</span><span class="p">,</span> <span class="s1">&#39;OperatingSystems&#39;</span><span class="p">,</span> <span class="s1">&#39;Browser&#39;</span><span class="p">,</span> <span class="s1">&#39;Region&#39;</span><span class="p">,</span> <span class="s1">&#39;TrafficType&#39;</span><span class="p">,</span> <span class="s1">&#39;VisitorType&#39;</span><span class="p">,</span> <span class="s1">&#39;Weekend&#39;</span><span class="p">]</span>
+<span class="n">numerical_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Administrative&#39;</span><span class="p">,</span> <span class="s1">&#39;Administrative_Duration&#39;</span><span class="p">,</span> <span class="s1">&#39;Informational&#39;</span><span class="p">,</span> <span class="s1">&#39;Informational_Duration&#39;</span><span class="p">,</span> <span class="s1">&#39;ProductRelated&#39;</span><span class="p">,</span> <span class="s1">&#39;ProductRelated_Duration&#39;</span><span class="p">,</span> <span class="s1">&#39;BounceRates&#39;</span><span class="p">,</span> <span class="s1">&#39;ExitRates&#39;</span><span class="p">,</span> <span class="s1">&#39;PageValues&#39;</span><span class="p">]</span>
+
+<span class="n">column_transformer</span> <span class="o">=</span> <span class="n">ColumnTransformer</span><span class="p">([</span>
+        <span class="p">(</span><span class="s1">&#39;OrdinalEncoder&#39;</span><span class="p">,</span> <span class="n">OrdinalEncoder</span><span class="p">(),</span> <span class="n">textual_columns</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;MinMaxScaler&#39;</span><span class="p">,</span> <span class="n">MinMaxScaler</span><span class="p">(),</span> <span class="n">numerical_columns</span><span class="p">),</span>
+<span class="c1">#         (&#39;OneHotEncoder&#39;, OneHotEncoder(), categorical_columns),</span>
+    <span class="p">],</span>
+    <span class="n">remainder</span><span class="o">=</span><span class="s1">&#39;passthrough&#39;</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">imblearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">imblearn.over_sampling</span> <span class="kn">import</span> <span class="n">SMOTENC</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
+
+<span class="n">categorical_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Month&#39;</span><span class="p">,</span> <span class="s1">&#39;OperatingSystems&#39;</span><span class="p">,</span> <span class="s1">&#39;Browser&#39;</span><span class="p">,</span> <span class="s1">&#39;Region&#39;</span><span class="p">,</span> <span class="s1">&#39;TrafficType&#39;</span><span class="p">,</span> <span class="s1">&#39;VisitorType&#39;</span><span class="p">,</span> <span class="s1">&#39;Weekend&#39;</span><span class="p">]</span>
+<span class="n">categorical_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="ow">in</span> <span class="n">categorical_features</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df_train</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+
+<span class="n">clf</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+    <span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;ColumnTransformer&#39;</span><span class="p">,</span> <span class="n">column_transformer</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SMOTENC&#39;</span><span class="p">,</span> <span class="n">SMOTENC</span><span class="p">(</span><span class="n">categorical_features</span><span class="o">=</span><span class="n">categorical_indices</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s1">&#39;Classifier&#39;</span><span class="p">,</span> <span class="n">SVC</span><span class="p">())</span>
+    <span class="p">])</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+
+<span class="c1"># Here we define the subset of parameters to use in the gridsearch model selection technique</span>
+<span class="n">param_grid</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;Classifier__C&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+        <span class="s1">&#39;Classifier__kernel&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;rbf&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;Classifier__gamma&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;auto&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Below there is a list of the parameters accepted by Sklearn’s Support Vector Classifiers</p>
+<ul class="simple">
+<li><p><strong>C</strong>: A value inversely proportional the amount of slack we want to allow.</p></li>
+<li><p><strong>kernel</strong>: The kernel function used to <em>compute</em> the inner products in the feature space.</p></li>
+<li><p><strong>gamma</strong>: A coefficient multiplying the kernel function. Intuitively is the inverse of the radius of influence of samples seleced as support vectors.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># linear_search = GridSearchCV(clf, param_grid, cv=5, n_jobs=6, verbose=5).fit(x_train, y_train)</span>
+<span class="c1"># linear_search.cv_results_</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="trees-and-random-forests">
+<h2>2. Trees and Random Forests<a class="headerlink" href="#trees-and-random-forests" title="Permalink to this headline">¶</a></h2>
+<p>Decision trees are predictors that assign labels to samples by travelling across a tree, from root to leaf. On each node, the next child is chosen by splitting the input space.</p>
+<p>The most common splitting rule for an internal node of the tree is a thresold on the value of a single feature (e.g. temperature&gt;40). This means that we move to either one of the child on the basis of <span class="math notranslate nohighlight">\(\mathbb{1}_\left[x_i&lt;\theta\right]\)</span> where <span class="math notranslate nohighlight">\(i \in \left[d\right]\)</span> is the index of the feature currently being analyzed, and <span class="math notranslate nohighlight">\(\theta\in\mathbb{R}\)</span> is the threshold value. We can think of a decision tree as a splitting of the input space <span class="math notranslate nohighlight">\(\mathcal{X}\in\mathbb{R}^d\)</span>, into as many cells as there are leaf nodes. It is clear then that the tree with <span class="math notranslate nohighlight">\(k\)</span> leaves shatters a set of cardinality <span class="math notranslate nohighlight">\(k\)</span>. It follows that an infinitely tall tree, with infinite number of leafs, has an infinite VC dimension. This can cause overfitting. For this reason we must adopt some methods to learn smaller trees, that will tend to overfit less, but have a higher empirical risk.</p>
+<div class="section" id="growing-a-tree">
+<h3>2.1. Growing a Tree<a class="headerlink" href="#growing-a-tree" title="Permalink to this headline">¶</a></h3>
+<p>When building a tree, we start from the whole training set. Then we build recursively either a child or a leaf. Leafs are built when the labels of the remaining training set have all the same label (we are in a binary classification example) or when we have no samples left, while children are built when the remaining samples have mixed labels. When a child node is required, the threhold rule is built by considering some <em>Gain measure</em>, where we select the threshold on the feature that produces the maximum gain over the remaining samples. We then generate the two new children, and split our training set on the newly found feature with the newly found threshold. We go on until we encounter a leaf, and then backtrack.</p>
+</div>
+<div class="section" id="pruning-a-tree">
+<h3>2.2 Pruning a Tree<a class="headerlink" href="#pruning-a-tree" title="Permalink to this headline">¶</a></h3>
+<p>In order to avoid the aforementioned problem of huge trees with high VC dimension, we must</p>
+</div>
+</div>
 </div>
 
     <script type="text/x-thebe-config">
@@ -414,7 +530,7 @@ The last equation can be solved via quadratic programming.</p>
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="data_preparation.html" title="previous page">Data Preparation &amp; Classification</a>
+    <a class='left-prev' id="prev-link" href="data_preparation.html" title="previous page">Pipelines</a>
     <a class='right-next' id="next-link" href="appendix.html" title="next page">Appendix</a>
 
         </div>

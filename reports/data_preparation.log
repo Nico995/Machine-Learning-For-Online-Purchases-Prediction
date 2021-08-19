@@ -28,8 +28,8 @@ x_train_resampled, y_train_resampled = sm.fit_resample(x_train, y_train)
 print(f'Starting size: {x_train.shape}   =>  Ovesampled Training size: {x_train_resampled.shape}')
 ------------------
 
-[0;31m------------------------------------------------------[0m
-[0;31mNameError[0m            Traceback (most recent call last)
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
 [0;32m<ipython-input-4-5c42a50505d2>[0m in [0;36m<module>[0;34m[0m
 [1;32m      2[0m [0;34m[0m[0m
 [1;32m      3[0m [0mcategorical_features[0m [0;34m=[0m [0;34m[[0m[0;34m'Month'[0m[0;34m,[0m [0;34m'OperatingSystems'[0m[0;34m,[0m [0;34m'Browser'[0m[0;34m,[0m [0;34m'Region'[0m[0;34m,[0m [0;34m'TrafficType'[0m[0;34m,[0m [0;34m'VisitorType'[0m[0;34m,[0m [0;34m'Weekend'[0m[0;34m][0m[0;34m[0m[0;34m[0m[0m

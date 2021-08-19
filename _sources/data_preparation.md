@@ -43,6 +43,7 @@ The first step is to put aside a small portion of the dataset, and call it our *
 
 ```{code-cell} ipython3
 :tags: [hide-input]
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
