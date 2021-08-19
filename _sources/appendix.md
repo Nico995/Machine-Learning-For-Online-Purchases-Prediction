@@ -706,7 +706,153 @@ $$L_\mathcal{D}\left(h\right)\leq \underset{h^\prime\in\mathcal{H}}{\operatornam
 where $L_\mathcal{D}\left(h\right) = \mathbb{E}_{\mathcal{z\sim D}}\left[\ell\left(\mathcal{h, z}\right)\right]$
 ```
 
++++
 
+### 4.8 Uniform Convergence
+
+Recall the $\operatorname{ERM}$ paradigm given a hypothesis class $\mathcal{H}$:
+1. The $\operatorname{ERM}$ recieves a training sample $S$
+2. The learner evaluates the *empirical* risk of each $h \in\mathcal{H}$ over the training sample $S$
+3. The learner outputs an $h$ that minimizes the *empirical* risk.
+
+We then hope that this $h_S$ is also a risk minimizer with respect to the *true data probability distribution* $\mathcal{D}$. For that, it is enough to ensure that the empricial risk of all members of $\mathcal{H}$ are good approximations of their true risk.
+
+```{admonition} $\epsilon$-representative sample
+:class: important
+A training set $S$ is called $\epsilon$-representative (w.r.t. domain $Z$, hypothesis class $\mathcal{H}$, loss function $\ell$, and distribuyion $\mathcal{D}$) if
+
+$$\forall{h}\in\mathcal{H},\ \left|L_S\left(h\right)-L_D\left(h\right)\right|\leq{\epsilon}$$
+
+```
+
+Now assume that a training set $S$ is $\frac{\epsilon}{2}$-representative, then any output of $\operatorname{ERM}_\mathcal{H}\left(S\right)$, namely, any $h_S\in \underset{h\in\mathcal{H}}{\operatorname{argmin}}L_S\left(h\right)$ satisfies
+
+$$L_D\left(h_S\right) \leq \underset{h\in\mathcal{H}}{\operatorname{min}} L_D\left(h\right) + \epsilon$$
+
+Proof:
+
+$$L_{\mathcal{D}}\left(h_{S}\right) \overset{1}{\leq} L_{S}\left(h_{S}\right)+\frac{\epsilon}{2} \overset{2}{\leq} L_{S}(h)+\frac{\epsilon}{2} \overset{3}{\leq} L_{\mathcal{D}}(h)+\frac{\epsilon}{2}+\frac{\epsilon}{2}=L_{\mathcal{D}}(h)+\epsilon,$$
+
+Where:
+* $1$ and $3$ hold because $S$ is $\epsilon$-representative: $\left|L_S\left(h\right)-L_D\left(h\right)\right|\leq{\epsilon}$
+* $2$ holds because $h_S$ is an $\operatorname{ERM}$ predictor (the hypothesis which yields the minimum empirical risk)
+
+We can now say that to ensure that the $\operatorname{ERM}$ rule is an agnorstic PAC learner, it is enough to show that with probability of at least $1-\theta$ over the random choice of a training set, it will be an $\epsilon$-representative training set.
+
+As we introduced $m_\mathcal{H}\left(\delta, \epsilon\right)$ for PAC learning, which told us the minimum sample complexity needed in order to **approximately** have (with confidence $1-\theta$) a **correct** learner (up to an error $\epsilon$), we now introduce 
+
+$$m^{UC}_\mathcal{H}:\left(0, 1\right)^2\rightarrow\mathbb{N}$$ 
+
+
+```{admonition} Uniform Convergence
+:class: important
+We say that a hypothesis class $\mathcal{H}$ has the *uniform convergence* property (w.r.t a domain $Z$ and a loss function $\ell$) if there exists a function $m^{UC}_\mathcal{H}:\left(0, 1\right)^2\rightarrow\mathbb{N}$ such that for every $\epsilon,\delta\in\left(0, 1\right)$ and for every probability distribution $\mathcal{D}$ over $Z$, if $S$ is a sample of $m \geq m^{UC}_\mathcal{H}\left(\epsilon,\theta\right)$ examples, drawn i.i.d. according to $\mathcal{D}$, then, with probability of at least $1-\delta$, $S$ is $\epsilon$-representative (which in turn means that the $\operatorname{ERM}$ rule is an agnostic PAC learner)
+```
+
+it follows that if a class $\mathcal{H}$ has the uniform convergence property (meaning that for each $h\in\mathcal{H}$ the there exists a function that gives us the minimum sample complexity that, with proability $1-\delta$ over the sampling of the domain set, gives us a training set $S$ which is $\epsilon$-representative) with a function $m^{UC}_\mathcal{H}$ then the class is agnostically PAC learnable with sample complexity $m_\mathcal{H}\left(\epsilon,\delta\right) \leq m^{UC}_\mathcal{H}\left(\epsilon /2, \delta\right)$. Furthermore, in that case, the $\operatorname{ERM}_\mathcal{H}$ paradigm is a succesful agnostic PAC learner for $\mathcal{H}$
+
+### 4.8 Recap
+
+Below is a recap of the most important results achieved during this brief introduction
+
+![resume](images/pac.png)
+
+### 4.8 VC-dimension
+
+The *Vapnik-Chervonenkis*(VC)-dimension is a property of a hypothesis class that gives the correct characterization of its learnability. In order to define the VC-dimension we first need to define a preliminary notion called *shattering*
+
+```{admonition} Shattering
+:class: important
+Let $\mathcal{H}$ be a class of $\{0, 1\}$ functions over some domain $\mathcal{X}$ and let $A\subseteq\mathcal{X}$. We say that $\mathcal{H}$ shatters $A$ if $\forall \mathcal{g}:A\rightarrow\{0, 1\} \exists h\in\mathcal{H}\ \operatorname{s.t.}\ \forall \mathcal{x} \in A,\ h\left(\mathcal{x}\right) = g\left(\mathcal{x}\right)$
+```
+
+```{code-cell} ipython3
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import matplotlib.path as mpath
+
+sns.set_style("darkgrid")
+
+# fig = plt.figure()
+fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+
+# Domain X
+ax.add_patch(patches.Rectangle((2, 2), 6, 6, fc='none', ec='blue'))
+ax.text(8.5, 4.5, '$\mathcal{X}$', fontsize=40, color='blue')
+
+# Subset A
+ax.add_patch(patches.Circle((5, 5), 1, fc='none', ec='red'))
+ax.text(4.8, 6.4, '$A$', fontsize=35, color='red')
+
+# 0-1 behaviour over A
+x_a = np.arange(4, 6, 0.01);
+y_a = np.sin(x_a*(4*np.pi))*0.2 + 5
+ax.plot(x_a, y_a, color='green', linewidth=5)
+ax.text(4.9, 5.6, '$\mathcal{g}$', fontsize=20, color='green')
+
+# 0-1 behaviour over X
+x_x_left = np.arange(2, 4, 0.01)
+y_x_left = np.sin(x_x_left*(4*np.pi))*0.5 + 5
+ax.plot(x_x_left, y_x_left, color='orange', linestyle='--', linewidth=3)
+
+x_a = np.arange(4, 6, 0.01);
+y_a = np.sin(x_a*(4*np.pi))*0.2 + 5
+ax.plot(x_a, y_a, color='orange', linestyle='--', linewidth=3)
+
+x_x_right = np.arange(6, 8, 0.01)
+y_x_right = np.sin(x_x_right*(4*np.pi))*0.5 + 5
+ax.plot(x_x_right, y_x_right, color='orange', linestyle='--', linewidth=3)
+
+ax.text(2.8, 6, '$\mathcal{h}$', fontsize=30, color='orange')
+# Amplitude of the sine wave is sine of a variable like time
+
+
+plt.ylim((0, 10))
+plt.xlim((0, 10))
+ax.set_yticks([])
+ax.set_xticks([])
+plt.show()
+```
+
+In the figure above we can see a (green) function $\mathcal{g}:A\rightarrow\{0, 1\}$ that represents a $\{0, 1\}$ behaviour over $A$. And a function $h$ defined over the domain $\mathcal{X}$ that agrees with the function $g$ over the set of points $A$.
+
+
+```{admonition} Meaning of $\{0, 1\}$ behaviour
+:class: note
+$\{0,1\}$ behaviour in this settings means "*a way of splitting the set A in two subsets*"
+```
+
+```{admonition} Function-Set duality
+:class: note
+There is equivalence between functions $\mathcal{h}:\mathcal{X}\rightarrow\{0, 1\}$ and subsets $A\subseteq\mathcal{X}$. Given any $\mathcal{h}$ I can define a set 
+
+$$\forall{h}:\mathcal{X}\rightarrow\{0, 1\}\exists A_{\mathcal{h}}=\{\mathcal{x}\in\mathcal{X}:\mathcal{h}\left(\mathcal{x}\right)=1\}$$
+
+The relationship also works in the opposite direction: 
+
+$$\forall{A}\subseteq\mathcal{X}\ \exists h_A\left(\mathcal{x}\right)=\begin{cases}1 & \text { if } x\in A \\ 0 & \text { if } x \notin A \end{cases}$$
+```
+
+We can now define the VC-Dimension
+
+
+```{admonition} Vapnik-Chervonenkis dimension
+:class: important
+The VC-dimension of a class $\mathcal{H}$ is defined as the size of the maximal shattered set.
+$$\operatorname{VCdim}\left(\mathcal{H}\right)\overset{\operatorname{def}}{=}\underset{A \operatorname{shattered by} \mathcal{H}}{\operatorname{max}} \left\lvert A\right\rvert $$
+```
+
+```{admonition} How to compute VC of $\mathcal{H}$
+:class: note
+* If I claim that $\operatorname{VCdim}\left(\mathcal{H}\right)\geq n$ then I have to find at least 1 set of size $n$ which is shattered
+* If I claim that $\operatorname{VCdim}\left(\mathcal{H}\right)< n$ then I have to show that no matter how I pick $n$ points, they will never be shattered by $\mathcal{h}$
+```
+
++++
+
+## 5. K-Fold Cross Validation
+
+The k-fold cross validation technique is designed to provide an accurate estimate of the true error without wasting too much data (as it happens in regular validation techniques). This method consists in dividng the original training dataset of size $m$, into $k$ subsets of size $m/k$. Once for each fold, a fold gets removed from the starting set and used as validation, while the remaining $k-1$ are used to train the model. Finally, the average of the empirical error computed on each fold is computed and considered as the average estimate of the true error. Usually, k-fold is used to perform model selection, and once the final model is found, it is then re-trained on the whole training set.
 
 ```{code-cell} ipython3
 

@@ -1,0 +1,444 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Model Exploration &#8212; Predicting Shopper Intentions</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.e8e5499552300ddf5d7adccae7cc3b70.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Appendix" href="appendix.html" />
+    <link rel="prev" title="Data Preparation &amp; Classification" href="data_preparation.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      <img src="_static/logo-resized.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Predicting Shopper Intentions</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+    <div class="bd-toc-item active">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
+   Predicting Shopper Intentions
+  </a>
+ </li>
+</ul>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="data_exploration.html">
+   Data Exploration
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="data_preparation.html">
+   Data Preparation &amp; Classification
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Model Exploration
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="appendix.html">
+   Appendix
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav> <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/model_exploration.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.ipynb</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+</div>
+
+            <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/executablebooks/jupyter-book"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fmodel_exploration.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        
+    </div>
+</div>
+
+            <!-- Full screen (wrap in <a> to have style consistency -->
+
+<a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+        data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+        title="Fullscreen mode"><i
+            class="fas fa-expand"></i></button></a>
+
+            <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/model_exploration.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
+
+        </div>
+
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
+            <div class="tocsection onthispage pt-5 pb-3">
+                <i class="fas fa-list"></i> Contents
+            </div>
+            <nav id="bd-toc-nav">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#support-vector-machines">
+   1. Support Vector Machines
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#margin-and-hard-svm">
+     1.1 Margin and Hard-SVM
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#soft-svm">
+     1.2 Soft-SVM
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#kernel-trick">
+     1.3 Kernel Trick
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="model-exploration">
+<h1>Model Exploration<a class="headerlink" href="#model-exploration" title="Permalink to this headline">¶</a></h1>
+<p>This section is <strong>not</strong> called model selection because our final goal is not to find the model with the best average of the true error estimation. We instead aim to showcase the common Data Science pipeline and try multiple models, showing at the same time the programming side and the mathematical side of them.</p>
+<div class="section" id="support-vector-machines">
+<h2>1. Support Vector Machines<a class="headerlink" href="#support-vector-machines" title="Permalink to this headline">¶</a></h2>
+<p>This algorithm tries to find a hyperplane that divides the saples living in the feature space, maximizing the minimum distance between the hyperplane itself and the closest point in both resulting halfspaces.</p>
+<div class="section" id="margin-and-hard-svm">
+<h3>1.1 Margin and Hard-SVM<a class="headerlink" href="#margin-and-hard-svm" title="Permalink to this headline">¶</a></h3>
+<p>Let <span class="math notranslate nohighlight">\(S = \left(\mathbf{x}_1, \mathcal{y}_1\right)\dots\left(\mathbf{x}_m, \mathcal{y}_m\right)\)</span> be the training set of size m, where each <span class="math notranslate nohighlight">\(\mathbf{x}_i\in\mathbb{R}^d\)</span> and <span class="math notranslate nohighlight">\(\mathcal{y}_i\in\{\pm1\}\)</span>. We say that the training set is linearelt separable, if there exists a halfspace, <span class="math notranslate nohighlight">\(\left(\mathbf{w}, \mathcal{b}\right)\)</span> such that <span class="math notranslate nohighlight">\(y_{i}=\operatorname{sign}\left(\left\langle\mathbf{w}, \mathbf{x}_{i}\right\rangle+b\right)\)</span> for all <span class="math notranslate nohighlight">\(i\)</span>. We can write this condition as:</p>
+<div class="math notranslate nohighlight">
+\[\forall i \in \left[m\right],\ y_i\left(\left\langle\mathbf{w, x_i}\right\rangle+b\right)&gt;0\]</div>
+<p>All halfspaces <span class="math notranslate nohighlight">\(\left(\mathbf{w}, \mathcal{b}\right)\)</span> that satisfiy the condition above are <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> hypotheses (and their 0-1 error is zero). For any <strong>separable</strong> training set, there are many <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> halfspaces, which one should we pick?</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+
+<span class="n">xp</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">yp</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="n">m1</span><span class="p">,</span> <span class="n">q1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">m2</span><span class="p">,</span> <span class="n">q2</span> <span class="o">=</span> <span class="mf">1.3</span><span class="p">,</span> <span class="mi">0</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">y1</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">m1</span> <span class="o">+</span> <span class="n">q1</span>
+<span class="n">y2</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">m2</span> <span class="o">+</span> <span class="n">q2</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y1</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&quot;tab10&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y2</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&quot;tab10&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">xp</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">yp</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/model_exploration_2_0.png" src="_images/model_exploration_2_0.png" />
+</div>
+</div>
+<p>Intuitively we might choose the red hyperplane to split our data, in order to formalize this intuition we introduce the concept of margin.</p>
+<div class="important admonition">
+<p class="admonition-title">Margin</p>
+<p>The margin of a hyperplane with respect to a training set is the minimal distance between a point in the training set and the hyperplane</p>
+</div>
+<p>Note that if a hyperplane has a large margin, even if we sligthly perturn each dataset instance, it will still separate the data <em>correctly</em>.</p>
+<p>As we will see later, the larger is the margin that a halfspace has over the training sample, the smaller is the true error of the halfspace. For this reason the <em>Hard-SVM</em> rule is the rule that returns an <span class="math notranslate nohighlight">\(ERM\)</span> hyperplane that separates the training set with the largest possible margin.</p>
+<ul class="simple">
+<li><p>Claim: The distance between a point <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> and the hyperplane defined by <span class="math notranslate nohighlight">\(\left(\mathbf{w},b\right)\)</span> where <span class="math notranslate nohighlight">\(\left\lVert\mathbb{w}\right\rVert=1\)</span> is <span class="math notranslate nohighlight">\(\left\lvert\left\langle\mathbf{w, x}\right\rangle+b\right\rvert\)</span></p></li>
+</ul>
+<p>On this basis, the point <span class="math notranslate nohighlight">\(\mathbf{x_i}\in S\)</span> closest to the hyperplane <span class="math notranslate nohighlight">\(L\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[d\left(\mathbf{x},L\right)=\underset{i\in\left[m\right]}{\operatorname{min}}\left\lvert\left\langle\mathbf{w, x_i}\right\rangle+b\right\rvert\]</div>
+<p>Hence, the Hard-SVM rule is</p>
+<div class="important admonition">
+<p class="admonition-title">Hard-SVM rule</p>
+<div class="math notranslate nohighlight">
+\[\underset{\left(\mathbf{w}, b\right):\left\lVert\mathbf{w}=1\right\rVert}{\operatorname{argmax}}\underset{i\in\left[m\right]}{\operatorname{min}}\left\lvert\left\langle\mathbf{w, x_i}\right\rangle+b\right\rvert\ \ s.t.\ \ \forall i, \ \mathcal{y_i}\left(\left\langle\mathbf{w, x_i}\right\rangle+b\right)&gt;0\tag{1}\]</div>
+<p>Equivalently</p>
+<div class="math notranslate nohighlight">
+\[\underset{\left(\mathbf{w}, b\right):\left\lVert\mathbf{w}=1\right\rVert}{\operatorname{argmax}}\underset{i\in\left[m\right]}{\operatorname{min}}\mathcal{y_i}\left(\left\langle\mathbf{x, x_i}\right\rangle+b\right)\tag{2}\]</div>
+<p>Equivalently</p>
+<div class="math notranslate nohighlight">
+\[\underset{\left(\mathbf{w}, b\right)}{\operatorname{argmin}}\left\lVert\mathbf{w}\right\rVert^2\ \operatorname{s.t.}\ \forall i,\ \mathcal{y_i}\left(\left\langle\mathbf{w, x_i}\right\rangle+b\right)&gt;1\tag{3}\]</div>
+</div>
+<p>Intuitively, we are going from maximizing the numerator of the distance formula (maximizing the minimal distance) to minimizing the norm of <span class="math notranslate nohighlight">\(w\)</span>.
+The last equation can be solved via quadratic programming.</p>
+<p>We now have to define a new concept of separability:</p>
+<div class="important admonition">
+<p class="admonition-title"><span class="math notranslate nohighlight">\(\left(\gamma,\rho\right)\)</span>-margin</p>
+<p>We say that <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> is separable with a <span class="math notranslate nohighlight">\(\left(\gamma,\rho\right)\)</span>-margin if exists <span class="math notranslate nohighlight">\(\left(\mathbf{w^*}, b^*\right)\ \operatorname{s.t.}\ \left\lVert\mathbf{w^*}\right\rVert=1\)</span> and</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D}\left(\{\left(x, y\right): \left\lVert x\right\rVert\leq\rho \wedge \mathcal{y}\left(\left\langle\mathbf{w^*, x}\right\rangle+b^*\right)&gt;1 \}\right)=1\]</div>
+<p>This means that when we say that <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> is separable with a <span class="math notranslate nohighlight">\(\left(\gamma,\rho\right)\)</span>-margin, if there is a ball of radius <span class="math notranslate nohighlight">\(\rho\)</span> inside which the hyperplane can <strong>always</strong> separate the points (finite set of points can violate the separability)</p>
+</div>
+<p>We can now state the theorem that gives us the sample complexity for Hard-SVM (without proving it)</p>
+<div class="important admonition">
+<p class="admonition-title">Hard-SVM Sample complexity</p>
+<p>if <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> is separable with a <span class="math notranslate nohighlight">\(\left(\gamma,\rho\right)\)</span>-margin, then the sample complexity of Hard-SVM is</p>
+<div class="math notranslate nohighlight">
+\[m\left(\epsilon,\delta\right)\leq \frac{8}{\epsilon^2}\left(2\left(\frac{\rho}{\gamma}\right)^2+\log{\frac{2}{\delta}}\right)\]</div>
+<p>Note that the sample complexity obtained by computing the VC dimension of half spaces in <span class="math notranslate nohighlight">\(d\)</span> dimensions, we get that the sample complexity is <span class="math notranslate nohighlight">\(d\)</span>. While now we have found that the sample complexity does not depend on the dimension, but only on the <span class="math notranslate nohighlight">\(\frac{\rho}{\delta}\)</span> ratio (and the accuracy <span class="math notranslate nohighlight">\(\delta\)</span> and the correctness <span class="math notranslate nohighlight">\(\epsilon\)</span>)</p>
+</div>
+<div class="important admonition">
+<p class="admonition-title">Robustness</p>
+<p>One of the strong points of SVMs is that due to their theory implications, the solution of the svm rule can be written as a linear combination of the points on the margin, for this reason they are robust with respect to outliers. (Fritz-John lemma)</p>
+</div>
+</div>
+<div class="section" id="soft-svm">
+<h3>1.2 Soft-SVM<a class="headerlink" href="#soft-svm" title="Permalink to this headline">¶</a></h3>
+<p>In the Hard-SVM settings we made the strong separability assumption, which needs to be relaxed in order to apply SVMs to real data. In order to relax this constraint, we introduce nonnegative slack variables <span class="math notranslate nohighlight">\(\xi_1,\dots,\xi_m\)</span>, and we repace each constraint that was before <span class="math notranslate nohighlight">\(\mathcal{y_i}\left(\left\langle\mathbf{w,x_i}\right\rangle+b\right) \geq 1\)</span> with <span class="math notranslate nohighlight">\(\mathcal{y_i}\left(\left\langle\mathbf{w,x_i}\right\rangle+b\right) \geq 1 - \xi_i\)</span>. <span class="math notranslate nohighlight">\(\xi_i\)</span> measures by how much the constraint <span class="math notranslate nohighlight">\(\mathcal{y_i}\left(\left\langle\mathbf{w,x_i}\right\rangle+b\right) \geq 1\)</span> is being violated. The Soft-SVM rules then writes:</p>
+<div class="important admonition">
+<p class="admonition-title">Soft-SVM rule</p>
+<div class="math notranslate nohighlight">
+\[\underset{\left(\mathbf{w}, b\right)}{\operatorname{argmin}}\left(\lambda\left\lVert\mathbf{w}\right\rVert^2+\frac{1}{m}\overset{m}{\underset{i=1}{\sum}}\xi_i\right) \operatorname{s.t.}\ \forall i,\ \mathcal{y_i}\left(\left\langle\mathbf{w, x_i}\right\rangle+b\right)\geq1\wedge\xi_i\geq0\tag{3}\]</div>
+<p>Note that now we also minimize the average violation of the constraint along with the norm</p>
+</div>
+</div>
+<div class="section" id="kernel-trick">
+<h3>1.3 Kernel Trick<a class="headerlink" href="#kernel-trick" title="Permalink to this headline">¶</a></h3>
+<p>Note that there exists a dual formulation for the SVM problem:</p>
+<div class="important admonition">
+<p class="admonition-title">Hard-SVM Primal-Dual</p>
+<p>(Primal)</p>
+<div class="math notranslate nohighlight">
+\[\underset{\left(\mathbf{w}, b\right)}{\operatorname{argmin}}\left\lVert\mathbf{w}\right\rVert^2\ \operatorname{s.t.}\ \forall i,\ \mathcal{y_i}\left\langle\mathbf{w, x_i}\right\rangle\geq1\tag{3}\]</div>
+<p>(Dual)</p>
+<div class="math notranslate nohighlight">
+\[\underset{\mathbf{\alpha}\in\mathbb{R}^m:\mathbf{\alpha}\geq\mathbf{0}}{\operatorname{max}}\underset{\mathbf{w}}{\operatorname{min}}\left(\frac{1}{2}\left\lVert\mathbf{w}^2\right\rVert+\overset{m}{\underset{i=1}{\sum}}\alpha_i\left(1-y_i\langle\mathbf{w, x_i}\rangle\right)\right)\]</div>
+</div>
+<p>We start by fixing <span class="math notranslate nohighlight">\(\alpha\)</span> and solving the inner optimization (we call it <span class="math notranslate nohighlight">\(Z\)</span>). Note that the inner minimization is the minimization of a hyperparaboloid in <span class="math notranslate nohighlight">\(w\)</span>, and in order to find the minimum, it is enough to find the vertex of the paraboloid, requiring the derivative equals 0</p>
+<div class="math notranslate nohighlight">
+\[\nabla Z\left(w\right)=\mathbf{w}-\overset{m}{\underset{i=1}{\sum}}\alpha_i y_i \mathbf{x}_i\]</div>
+<div class="math notranslate nohighlight">
+\[\mathbf{w}=\overset{m}{\underset{i=1}{\sum}}\alpha_i y_i \mathbf{x}_i\]</div>
+<p>NOTE that this means that our solution is nothing more than a linear combination of our data. Plugging back the solution of the inner optimization, into the outer optimization, we obtain</p>
+<div class="math notranslate nohighlight">
+\[\underset{\mathbf{\alpha}\in\mathbb{R}^m:\mathbf{\alpha}\geq\mathbf{0}}{\operatorname{max}}\left(\overset{m}{\underset{i=1}{\sum}}\alpha_i-\frac{1}{2}\overset{m}{\underset{i,j=1}{\sum}} \alpha_i\alpha_j y_i y_j \left\langle\mathbf{x_i, x_j}\right\rangle  \right)\]</div>
+<p>The problem now is entirely dependent on the inner product of <span class="math notranslate nohighlight">\(\left\langle\mathbf{x_i, x_j}\right\rangle\)</span>. We introudce the concept of <em>GRAM MATRIX</em> which is essentially a matrix of inner products defined as</p>
+<div class="important admonition">
+<p class="admonition-title">Gram Matrix</p>
+<p>We call Gram Matrix of <span class="math notranslate nohighlight">\({\mathbf{x_i},\dots,\mathbf{x_m}}\)</span> the matrix <span class="math notranslate nohighlight">\(G=\left(G_{ij}\right)\ \operatorname{s.t.}\ G_{ij}=\left\langle\mathbf{x_i, x_j}\right\rangle\)</span></p>
+</div>
+<p>And we can now say that our problem is entirely controlled by the entries of the Gram Matrix. Now that we have this new formulation of the SVM, we can make a step further, and think to those situations where the points are not linearly separable in the original representation (space). The solution to this is to find some <em>feature space</em> where our data is actually linearly separable, and train our linear model in that space. In order to reach that space, we need a <em>mapping function</em></p>
+<div class="math notranslate nohighlight">
+\[\psi: \mathcal{X}\rightarrow\mathcal{H} \left(\text{e.g.}\psi\left(x\right)=\left(x,x^2\right)\right)\]</div>
+<p>Where <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is a special space called <em>Hilbert Space</em>. Our solution turns into <span class="math notranslate nohighlight">\(\mathbf{w}=\underset{i}{\sum}\alpha_i\psi\left(\mathbf{x}_i\right)\)</span>, while the entry of our Gram matrix now looks like <span class="math notranslate nohighlight">\(G_{ij}=\left\langle\psi\left(\mathbf{x}_i\right),\psi\left(\mathbf{x}_j\right)\right\rangle\)</span></p>
+<p>This is an important result, but it carries with it some computational issues (it is expensive to compute the full Gram matrix for any mapping function). To make this feasible we consider <em>Mercer’s conditions</em>:</p>
+<div class="important admonition">
+<p class="admonition-title">Mercer’s Conditions</p>
+<p>A symmetric function (that is <span class="math notranslate nohighlight">\(K\left(\mathbf{x,x^\prime}\right)=K\left(\mathbf{x^\prime,x}\right)\ \forall x,x^\prime\)</span>) <span class="math notranslate nohighlight">\(K:\mathcal{X}\times\mathcal{X}\rightarrow\mathbb{R}\)</span> implements an inner product in some Hilbert space, (that is <span class="math notranslate nohighlight">\(\exists\psi:\mathcal{X}\rightarrow\mathcal{H}:k\left(\mathbf{x,x^\prime}\right)=\left\langle\psi\left(\mathbf{x_i}\right),\psi\left(\mathbf{x_J}\right)\right\rangle\)</span> if and only if it is positive semidefinite.</p>
+</div>
+<p>This allows to replace the dot product in the feature space, with the evaluation of <span class="math notranslate nohighlight">\(K\)</span> on the points in the starting representation, making this approach viable computationally.</p>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        
+        <div class='prev-next-bottom'>
+            
+    <a class='left-prev' id="prev-link" href="data_preparation.html" title="previous page">Data Preparation &amp; Classification</a>
+    <a class='right-next' id="next-link" href="appendix.html" title="next page">Appendix</a>
+
+        </div>
+        
+        </div>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Nicola Occelli<br/>
+        
+            &copy; Copyright 2021.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+  
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+  
+  </body>
+</html>

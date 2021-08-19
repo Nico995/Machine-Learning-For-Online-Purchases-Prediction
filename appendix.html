@@ -53,7 +53,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Data Preparation &amp; Classification" href="data_preparation.html" />
+    <link rel="prev" title="Model Exploration" href="model_exploration.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -99,6 +99,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="data_preparation.html">
    Data Preparation &amp; Classification
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="model_exploration.html">
+   Model Exploration
   </a>
  </li>
  <li class="toctree-l1 current active">
@@ -377,7 +382,27 @@
      4.7 Generalizing the model - Extending further than Binary Classification
     </a>
    </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#uniform-convergence">
+     4.8 Uniform Convergence
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#recap">
+     4.8 Recap
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#vc-dimension">
+     4.8 VC-dimension
+    </a>
+   </li>
   </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#k-fold-cross-validation">
+   5. K-Fold Cross Validation
+  </a>
  </li>
 </ul>
 
@@ -1220,6 +1245,140 @@ the choice of the m training examples)</p>
 <p>where <span class="math notranslate nohighlight">\(L_\mathcal{D}\left(h\right) = \mathbb{E}_{\mathcal{z\sim D}}\left[\ell\left(\mathcal{h, z}\right)\right]\)</span></p>
 </div>
 </div>
+<div class="section" id="uniform-convergence">
+<h3>4.8 Uniform Convergence<a class="headerlink" href="#uniform-convergence" title="Permalink to this headline">¶</a></h3>
+<p>Recall the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> paradigm given a hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span>:</p>
+<ol class="simple">
+<li><p>The <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> recieves a training sample <span class="math notranslate nohighlight">\(S\)</span></p></li>
+<li><p>The learner evaluates the <em>empirical</em> risk of each <span class="math notranslate nohighlight">\(h \in\mathcal{H}\)</span> over the training sample <span class="math notranslate nohighlight">\(S\)</span></p></li>
+<li><p>The learner outputs an <span class="math notranslate nohighlight">\(h\)</span> that minimizes the <em>empirical</em> risk.</p></li>
+</ol>
+<p>We then hope that this <span class="math notranslate nohighlight">\(h_S\)</span> is also a risk minimizer with respect to the <em>true data probability distribution</em> <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>. For that, it is enough to ensure that the empricial risk of all members of <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> are good approximations of their true risk.</p>
+<div class="important admonition">
+<p class="admonition-title"><span class="math notranslate nohighlight">\(\epsilon\)</span>-representative sample</p>
+<p>A training set <span class="math notranslate nohighlight">\(S\)</span> is called <span class="math notranslate nohighlight">\(\epsilon\)</span>-representative (w.r.t. domain <span class="math notranslate nohighlight">\(Z\)</span>, hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span>, loss function <span class="math notranslate nohighlight">\(\ell\)</span>, and distribuyion <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>) if</p>
+<div class="math notranslate nohighlight">
+\[\forall{h}\in\mathcal{H},\ \left|L_S\left(h\right)-L_D\left(h\right)\right|\leq{\epsilon}\]</div>
+</div>
+<p>Now assume that a training set <span class="math notranslate nohighlight">\(S\)</span> is <span class="math notranslate nohighlight">\(\frac{\epsilon}{2}\)</span>-representative, then any output of <span class="math notranslate nohighlight">\(\operatorname{ERM}_\mathcal{H}\left(S\right)\)</span>, namely, any <span class="math notranslate nohighlight">\(h_S\in \underset{h\in\mathcal{H}}{\operatorname{argmin}}L_S\left(h\right)\)</span> satisfies</p>
+<div class="math notranslate nohighlight">
+\[L_D\left(h_S\right) \leq \underset{h\in\mathcal{H}}{\operatorname{min}} L_D\left(h\right) + \epsilon\]</div>
+<p>Proof:</p>
+<div class="math notranslate nohighlight">
+\[L_{\mathcal{D}}\left(h_{S}\right) \overset{1}{\leq} L_{S}\left(h_{S}\right)+\frac{\epsilon}{2} \overset{2}{\leq} L_{S}(h)+\frac{\epsilon}{2} \overset{3}{\leq} L_{\mathcal{D}}(h)+\frac{\epsilon}{2}+\frac{\epsilon}{2}=L_{\mathcal{D}}(h)+\epsilon,\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(1\)</span> and <span class="math notranslate nohighlight">\(3\)</span> hold because <span class="math notranslate nohighlight">\(S\)</span> is <span class="math notranslate nohighlight">\(\epsilon\)</span>-representative: <span class="math notranslate nohighlight">\(\left|L_S\left(h\right)-L_D\left(h\right)\right|\leq{\epsilon}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(2\)</span> holds because <span class="math notranslate nohighlight">\(h_S\)</span> is an <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> predictor (the hypothesis which yields the minimum empirical risk)</p></li>
+</ul>
+<p>We can now say that to ensure that the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> rule is an agnorstic PAC learner, it is enough to show that with probability of at least <span class="math notranslate nohighlight">\(1-\theta\)</span> over the random choice of a training set, it will be an <span class="math notranslate nohighlight">\(\epsilon\)</span>-representative training set.</p>
+<p>As we introduced <span class="math notranslate nohighlight">\(m_\mathcal{H}\left(\delta, \epsilon\right)\)</span> for PAC learning, which told us the minimum sample complexity needed in order to <strong>approximately</strong> have (with confidence <span class="math notranslate nohighlight">\(1-\theta\)</span>) a <strong>correct</strong> learner (up to an error <span class="math notranslate nohighlight">\(\epsilon\)</span>), we now introduce</p>
+<div class="math notranslate nohighlight">
+\[m^{UC}_\mathcal{H}:\left(0, 1\right)^2\rightarrow\mathbb{N}\]</div>
+<div class="important admonition">
+<p class="admonition-title">Uniform Convergence</p>
+<p>We say that a hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> has the <em>uniform convergence</em> property (w.r.t a domain <span class="math notranslate nohighlight">\(Z\)</span> and a loss function <span class="math notranslate nohighlight">\(\ell\)</span>) if there exists a function <span class="math notranslate nohighlight">\(m^{UC}_\mathcal{H}:\left(0, 1\right)^2\rightarrow\mathbb{N}\)</span> such that for every <span class="math notranslate nohighlight">\(\epsilon,\delta\in\left(0, 1\right)\)</span> and for every probability distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> over <span class="math notranslate nohighlight">\(Z\)</span>, if <span class="math notranslate nohighlight">\(S\)</span> is a sample of <span class="math notranslate nohighlight">\(m \geq m^{UC}_\mathcal{H}\left(\epsilon,\theta\right)\)</span> examples, drawn i.i.d. according to <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>, then, with probability of at least <span class="math notranslate nohighlight">\(1-\delta\)</span>, <span class="math notranslate nohighlight">\(S\)</span> is <span class="math notranslate nohighlight">\(\epsilon\)</span>-representative (which in turn means that the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> rule is an agnostic PAC learner)</p>
+</div>
+<p>it follows that if a class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> has the uniform convergence property (meaning that for each <span class="math notranslate nohighlight">\(h\in\mathcal{H}\)</span> the there exists a function that gives us the minimum sample complexity that, with proability <span class="math notranslate nohighlight">\(1-\delta\)</span> over the sampling of the domain set, gives us a training set <span class="math notranslate nohighlight">\(S\)</span> which is <span class="math notranslate nohighlight">\(\epsilon\)</span>-representative) with a function <span class="math notranslate nohighlight">\(m^{UC}_\mathcal{H}\)</span> then the class is agnostically PAC learnable with sample complexity <span class="math notranslate nohighlight">\(m_\mathcal{H}\left(\epsilon,\delta\right) \leq m^{UC}_\mathcal{H}\left(\epsilon /2, \delta\right)\)</span>. Furthermore, in that case, the <span class="math notranslate nohighlight">\(\operatorname{ERM}_\mathcal{H}\)</span> paradigm is a succesful agnostic PAC learner for <span class="math notranslate nohighlight">\(\mathcal{H}\)</span></p>
+</div>
+<div class="section" id="recap">
+<h3>4.8 Recap<a class="headerlink" href="#recap" title="Permalink to this headline">¶</a></h3>
+<p>Below is a recap of the most important results achieved during this brief introduction</p>
+<p><img alt="resume" src="_images/pac.png" /></p>
+</div>
+<div class="section" id="vc-dimension">
+<h3>4.8 VC-dimension<a class="headerlink" href="#vc-dimension" title="Permalink to this headline">¶</a></h3>
+<p>The <em>Vapnik-Chervonenkis</em>(VC)-dimension is a property of a hypothesis class that gives the correct characterization of its learnability. In order to define the VC-dimension we first need to define a preliminary notion called <em>shattering</em></p>
+<div class="important admonition">
+<p class="admonition-title">Shattering</p>
+<p>Let <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> be a class of <span class="math notranslate nohighlight">\(\{0, 1\}\)</span> functions over some domain <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and let <span class="math notranslate nohighlight">\(A\subseteq\mathcal{X}\)</span>. We say that <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> shatters <span class="math notranslate nohighlight">\(A\)</span> if <span class="math notranslate nohighlight">\(\forall \mathcal{g}:A\rightarrow\{0, 1\} \exists h\in\mathcal{H}\ \operatorname{s.t.}\ \forall \mathcal{x} \in A,\ h\left(\mathcal{x}\right) = g\left(\mathcal{x}\right)\)</span></p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
+<span class="kn">import</span> <span class="nn">matplotlib.path</span> <span class="k">as</span> <span class="nn">mpath</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+
+<span class="c1"># fig = plt.figure()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="c1"># Domain X</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">8.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="s1">&#39;$\mathcal</span><span class="si">{X}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+
+<span class="c1"># Subset A</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patches</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">4.8</span><span class="p">,</span> <span class="mf">6.4</span><span class="p">,</span> <span class="s1">&#39;$A$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+
+<span class="c1"># 0-1 behaviour over A</span>
+<span class="n">x_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">y_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x_a</span><span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="mf">0.2</span> <span class="o">+</span> <span class="mi">5</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_a</span><span class="p">,</span> <span class="n">y_a</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">4.9</span><span class="p">,</span> <span class="mf">5.6</span><span class="p">,</span> <span class="s1">&#39;$\mathcal</span><span class="si">{g}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+
+<span class="c1"># 0-1 behaviour over X</span>
+<span class="n">x_x_left</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="n">y_x_left</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x_x_left</span><span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="mf">0.5</span> <span class="o">+</span> <span class="mi">5</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_x_left</span><span class="p">,</span> <span class="n">y_x_left</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">x_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">y_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x_a</span><span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="mf">0.2</span> <span class="o">+</span> <span class="mi">5</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_a</span><span class="p">,</span> <span class="n">y_a</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">x_x_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="n">y_x_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x_x_right</span><span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="mf">0.5</span> <span class="o">+</span> <span class="mi">5</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_x_right</span><span class="p">,</span> <span class="n">y_x_right</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">2.8</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;$\mathcal</span><span class="si">{h}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">)</span>
+<span class="c1"># Amplitude of the sine wave is sine of a variable like time</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/appendix_25_0.png" src="_images/appendix_25_0.png" />
+</div>
+</div>
+<p>In the figure above we can see a (green) function <span class="math notranslate nohighlight">\(\mathcal{g}:A\rightarrow\{0, 1\}\)</span> that represents a <span class="math notranslate nohighlight">\(\{0, 1\}\)</span> behaviour over <span class="math notranslate nohighlight">\(A\)</span>. And a function <span class="math notranslate nohighlight">\(h\)</span> defined over the domain <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> that agrees with the function <span class="math notranslate nohighlight">\(g\)</span> over the set of points <span class="math notranslate nohighlight">\(A\)</span>.</p>
+<div class="note admonition">
+<p class="admonition-title">Meaning of <span class="math notranslate nohighlight">\({0, 1}\)</span> behaviour</p>
+<p><span class="math notranslate nohighlight">\(\{0,1\}\)</span> behaviour in this settings means “<em>a way of splitting the set A in two subsets</em>”</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Function-Set duality</p>
+<p>There is equivalence between functions <span class="math notranslate nohighlight">\(\mathcal{h}:\mathcal{X}\rightarrow\{0, 1\}\)</span> and subsets <span class="math notranslate nohighlight">\(A\subseteq\mathcal{X}\)</span>. Given any <span class="math notranslate nohighlight">\(\mathcal{h}\)</span> I can define a set</p>
+<div class="math notranslate nohighlight">
+\[\forall{h}:\mathcal{X}\rightarrow\{0, 1\}\exists A_{\mathcal{h}}=\{\mathcal{x}\in\mathcal{X}:\mathcal{h}\left(\mathcal{x}\right)=1\}\]</div>
+<p>The relationship also works in the opposite direction:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\forall{A}\subseteq\mathcal{X}\ \exists h_A\left(\mathcal{x}\right)=\begin{cases}1 &amp; \text { if } x\in A \\ 0 &amp; \text { if } x \notin A \end{cases}\end{split}\]</div>
+</div>
+<p>We can now define the VC-Dimension</p>
+<div class="important admonition">
+<p class="admonition-title">Vapnik-Chervonenkis dimension</p>
+<p>The VC-dimension of a class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is defined as the size of the maximal shattered set.
+$<span class="math notranslate nohighlight">\(\operatorname{VCdim}\left(\mathcal{H}\right)\overset{\operatorname{def}}{=}\underset{A \operatorname{shattered by} \mathcal{H}}{\operatorname{max}} \left\lvert A\right\rvert \)</span>$</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">How to compute VC of <span class="math notranslate nohighlight">\(\mathcal{H}\)</span></p>
+<ul class="simple">
+<li><p>If I claim that <span class="math notranslate nohighlight">\(\operatorname{VCdim}\left(\mathcal{H}\right)\geq n\)</span> then I have to find at least 1 set of size <span class="math notranslate nohighlight">\(n\)</span> which is shattered</p></li>
+<li><p>If I claim that <span class="math notranslate nohighlight">\(\operatorname{VCdim}\left(\mathcal{H}\right)&lt; n\)</span> then I have to show that no matter how I pick <span class="math notranslate nohighlight">\(n\)</span> points, they will never be shattered by <span class="math notranslate nohighlight">\(\mathcal{h}\)</span></p></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="k-fold-cross-validation">
+<h2>5. K-Fold Cross Validation<a class="headerlink" href="#k-fold-cross-validation" title="Permalink to this headline">¶</a></h2>
+<p>The k-fold cross validation technique is designed to provide an accurate estimate of the true error without wasting too much data (as it happens in regular validation techniques). This method consists in dividng the original training dataset of size <span class="math notranslate nohighlight">\(m\)</span>, into <span class="math notranslate nohighlight">\(k\)</span> subsets of size <span class="math notranslate nohighlight">\(m/k\)</span>. Once for each fold, a fold gets removed from the starting set and used as validation, while the remaining <span class="math notranslate nohighlight">\(k-1\)</span> are used to train the model. Finally, the average of the empirical error computed on each fold is computed and considered as the average estimate of the true error. Usually, k-fold is used to perform model selection, and once the final model is found, it is then re-trained on the whole training set.</p>
 </div>
 </div>
 
@@ -1248,7 +1407,7 @@ the choice of the m training examples)</p>
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="data_preparation.html" title="previous page">Data Preparation &amp; Classification</a>
+    <a class='left-prev' id="prev-link" href="model_exploration.html" title="previous page">Model Exploration</a>
 
         </div>
         

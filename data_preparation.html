@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Data Preparation &amp; Classification &#8212; Predicting Shopper Intentions</title>
+    <title>Pipelines &#8212; Predicting Shopper Intentions</title>
     
   <link href="_static/css/theme.css" rel="stylesheet" />
   <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -51,7 +51,7 @@
     <script async="async" src="_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Appendix" href="appendix.html" />
+    <link rel="next" title="Model Exploration" href="model_exploration.html" />
     <link rel="prev" title="Data Exploration" href="data_exploration.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -97,7 +97,12 @@
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Data Preparation &amp; Classification
+   Pipelines
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="model_exploration.html">
+   Model Exploration
   </a>
  </li>
  <li class="toctree-l1">
@@ -243,8 +248,8 @@
         
               <div>
                 
-  <div class="section" id="data-preparation-classification">
-<h1>Data Preparation &amp; Classification<a class="headerlink" href="#data-preparation-classification" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="pipelines">
+<h1>Pipelines<a class="headerlink" href="#pipelines" title="Permalink to this headline">¶</a></h1>
 <p>Before getting to our prediction algorithm, our data must go through different processes, in different subsets.
 The order of such processes is often misunderstood.
 For this reason, we are going to start from a picture summing up the whole process, and go through it step by step.</p>
@@ -267,7 +272,7 @@ Now, let’s prepare our data.</p>
 <h2>Training-Test Dataset Split<a class="headerlink" href="#training-test-dataset-split" title="Permalink to this headline">¶</a></h2>
 <p>To make the code more compact and readable, we are going to use sklearn’s pipeline object to create a reusable pipeline of actions.</p>
 <p>The first step is to put aside a small portion of the dataset, and call it our <em>test data</em>.</p>
-<div class="cell docutils container">
+<div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
@@ -474,7 +479,6 @@ Now, let’s prepare our data.</p>
     <span class="n">steps</span><span class="o">=</span><span class="p">[</span>
         <span class="p">(</span><span class="s1">&#39;ColumnTransformer&#39;</span><span class="p">,</span> <span class="n">column_transformer</span><span class="p">),</span>
         <span class="p">(</span><span class="s1">&#39;SMOTENC&#39;</span><span class="p">,</span> <span class="n">SMOTENC</span><span class="p">(</span><span class="n">categorical_features</span><span class="o">=</span><span class="n">categorical_indices</span><span class="p">)),</span>
-<span class="c1">#         (&#39;OneHotEncoder&#39;, one_hot_encoder),</span>
         <span class="p">(</span><span class="s1">&#39;Classifier&#39;</span><span class="p">,</span> <span class="n">RandomForestClassifier</span><span class="p">())</span>
     <span class="p">])</span>
 </pre></div>
@@ -484,33 +488,25 @@ Now, let’s prepare our data.</p>
 </div>
 <div class="section" id="gridsearch-crossvalidation">
 <h2>GridSearch &amp; CrossValidation<a class="headerlink" href="#gridsearch-crossvalidation" title="Permalink to this headline">¶</a></h2>
-<p><em>GridSearch</em> is one of many approaches to <em>hyperparameter optimization</em>. It is an exaustive search of a predefined subset of hyperparameters (values for continuos parameters are implicitly discretized). The algorithm is then trained with each n-uple in the cartesian product of the sets of each parameter, and is evaluated on a held-out validation set.</p>
+<p><em>GridSearch</em> is one of many approaches to <em>hyperparameter optimization</em> or <em>model selection</em>. It is an exaustive search of a predefined subset of hyperparameters (values for continuos parameters are implicitly discretized). The algorithm is then trained with each n-uple in the cartesian product of the sets of each parameter, and is evaluated on a held-out validation set.</p>
 <p>Since we are also doing <em>CrossValidation</em>, each hyperparameter configuration is evaluated on each of the k folds in which we split our training set.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
 
-
+<span class="c1"># Here we define the subset of parameters to use in the gridsearch model selection technique</span>
 <span class="n">param_grid</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
         <span class="s1">&#39;Classifier__random_state&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">42</span><span class="p">],</span>
+        <span class="s1">&#39;Classifier__n_estimators&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
     <span class="p">}</span>
 <span class="p">]</span>
 
+<span class="c1"># And here we put together every piece of the pipeline to create a reusable structure in which we can plug in different</span>
+<span class="c1"># Models and transformers without going through the effort of writing again a big bunch of code</span>
+<span class="c1"># TODO: uncomment</span>
 <span class="c1"># linear_search = GridSearchCV(clf, param_grid, cv=5, n_jobs=6).fit(x_train, y_train)</span>
-<span class="n">linear_search</span><span class="o">.</span><span class="n">cv_results_</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">4</span><span class="o">-</span><span class="n">c02be7b0a9e1</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> 
-<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="c1"># linear_search = GridSearchCV(clf, param_grid, cv=5, n_jobs=6).fit(x_train, y_train)</span>
-<span class="ne">---&gt; </span><span class="mi">11</span> <span class="n">linear_search</span><span class="o">.</span><span class="n">cv_results_</span>
-
-<span class="ne">NameError</span>: name &#39;linear_search&#39; is not defined
+<span class="c1"># linear_search.cv_results_</span>
 </pre></div>
 </div>
 </div>
@@ -544,7 +540,7 @@ Now, let’s prepare our data.</p>
         <div class='prev-next-bottom'>
             
     <a class='left-prev' id="prev-link" href="data_exploration.html" title="previous page">Data Exploration</a>
-    <a class='right-next' id="next-link" href="appendix.html" title="next page">Appendix</a>
+    <a class='right-next' id="next-link" href="model_exploration.html" title="next page">Model Exploration</a>
 
         </div>
         

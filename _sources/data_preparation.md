@@ -13,7 +13,7 @@ kernelspec:
   name: python3
 ---
 
-# Data Preparation & Classification
+# Pipelines
 
 Before getting to our prediction algorithm, our data must go through different processes, in different subsets.
 The order of such processes is often misunderstood.
@@ -35,13 +35,14 @@ Now, let's prepare our data.
 
 +++
 
-## Training-Test Dataset Split 
+## Training-Test Dataset Split
 
 To make the code more compact and readable, we are going to use sklearn's pipeline object to create a reusable pipeline of actions.
 
 The first step is to put aside a small portion of the dataset, and call it our *test data*.
 
 ```{code-cell} ipython3
+:tags: [hide-input]
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -53,7 +54,7 @@ print(f'training data shape: {df_train.shape}\t\ttest data shape: {df_test.shape
 df.head()
 ```
 
-## Column Transformer 
+## Column Transformer
 For all those actions that require statistics computed column-wise, we use the *ColumnTransformer* object, in which we can insert all those procedures like *Encoding* and *Scaling*.
 
 ```{code-cell} ipython3
@@ -88,29 +89,32 @@ clf = Pipeline(
     steps=[
         ('ColumnTransformer', column_transformer),
         ('SMOTENC', SMOTENC(categorical_features=categorical_indices)),
-#         ('OneHotEncoder', one_hot_encoder),
         ('Classifier', RandomForestClassifier())
     ])
 ```
 
 ## GridSearch & CrossValidation
 
-*GridSearch* is one of many approaches to *hyperparameter optimization*. It is an exaustive search of a predefined subset of hyperparameters (values for continuos parameters are implicitly discretized). The algorithm is then trained with each n-uple in the cartesian product of the sets of each parameter, and is evaluated on a held-out validation set. 
+*GridSearch* is one of many approaches to *hyperparameter optimization* or *model selection*. It is an exaustive search of a predefined subset of hyperparameters (values for continuos parameters are implicitly discretized). The algorithm is then trained with each n-uple in the cartesian product of the sets of each parameter, and is evaluated on a held-out validation set.
 
 Since we are also doing *CrossValidation*, each hyperparameter configuration is evaluated on each of the k folds in which we split our training set.
 
 ```{code-cell} ipython3
 from sklearn.model_selection import GridSearchCV
 
-
+# Here we define the subset of parameters to use in the gridsearch model selection technique
 param_grid = [
     {
         'Classifier__random_state': [42],
+        'Classifier__n_estimators': [10, 50, 100]
     }
 ]
 
+# And here we put together every piece of the pipeline to create a reusable structure in which we can plug in different
+# Models and transformers without going through the effort of writing again a big bunch of code
+# TODO: uncomment
 # linear_search = GridSearchCV(clf, param_grid, cv=5, n_jobs=6).fit(x_train, y_train)
-linear_search.cv_results_
+# linear_search.cv_results_
 ```
 
 ```{code-cell} ipython3
