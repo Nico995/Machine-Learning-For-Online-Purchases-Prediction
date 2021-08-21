@@ -208,7 +208,68 @@ plt.show()
 
 # The above results are obtained with a 0.99 confidence interval, and they show that the only non dependent pair of features are *Region* and *Weekend*.
 # 
-# 
 # ```{tip}
-# To know more about Violin Plots and what's really behind it, have a look at the Appendix, or click [here](appendix:chi-squared)
+# To know more about chi-squared tests and what's really behind it, have a look at the Appendix, or click [here](appendix:chi-squared)
+# ```
+# 
+# ## Class Balance
+# 
+# For classification problems class imbalance can have a negative impact on the prediction performance of our model.
+# For this reason is necessary to have an idea whether our samples are evenly distributed among our classes:
+
+# In[8]:
+
+
+df['Revenue_str'] = df['Revenue'].astype('int').astype('str')
+
+fg = sns.displot(x='Revenue_str' ,data=df, discrete=True, bins=[0, 1], hue='Revenue_str', legend=False, palette="muted")
+fg.axes[0][0].text(-0.15, df['Revenue'].eq(0).sum()//2-200, f"{df['Revenue'].eq(0).sum()*100/df.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].text(1-0.15, df['Revenue'].eq(1).sum()//2-200, f"{df['Revenue'].eq(1).sum()*100/df.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].set_xlabel('Revenue')
+plt.tight_layout()
+plt.show()
+
+df = df.drop(columns='Revenue_str');
+
+
+# The problem is clearly unbalanced towards negative samples (sessions without any purchase). This means that we will have to balance the dataset either by using *Oversampling* or *Undersampling* techniques.
+# 
+# The two main oversampling techniques are called SMOTE (Synthetic Monitoring Oversampling TEchnique) and ADASYN (ADAptive SYNthetic).
+# Both techniques are based on the same oversampling algorithm:
+# 
+# $${\displaystyle x_{new} = x_i + \lambda \times (x_{zi} - x_i)}$$
+# 
+# 
+# ## Smote
+
+# In[9]:
+
+
+from imblearn.over_sampling import SMOTENC
+from sklearn.preprocessing import OrdinalEncoder
+
+# Transform categorical to ordinal
+text_columns = ['Month', 'VisitorType', 'Weekend', 'Revenue']
+enc = OrdinalEncoder()
+df[text_columns] = enc.fit_transform(df[text_columns]).astype(int)
+
+# get the smote object
+sm = SMOTENC(categorical_features=[c in categorical_columns for c in df.columns], k_neighbors=5, random_state=42)
+
+# Resample data
+df_x, df_y = sm.fit_resample(df.drop(columns=['Revenue']), df['Revenue'])
+df_y = pd.DataFrame({'Revenue': df_y})
+df_y['Revenue_str'] = df_y['Revenue'].astype('int').astype('str')
+
+# Plot class distribution
+fg = sns.displot(x='Revenue_str' ,data=df_y, discrete=True, bins=[0, 1], hue='Revenue_str', legend=False, palette="muted")
+fg.axes[0][0].text(-0.15, df_y['Revenue'].eq(0).sum()//2-200, f"{df_y['Revenue'].eq(0).sum()*100/df_y.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].text(1-0.15, df_y['Revenue'].eq(1).sum()//2-200, f"{df_y['Revenue'].eq(1).sum()*100/df_y.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].set_xlabel('Revenue')
+plt.tight_layout()
+plt.show()
+
+
+# ```{tip}
+# To know more about SMOTE and oversampling and what’s really behind it, have a look at the Appendix, or click [here](appendix:oversampling)
 # ```

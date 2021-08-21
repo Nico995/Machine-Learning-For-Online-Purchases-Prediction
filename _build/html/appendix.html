@@ -53,7 +53,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Data Exploration" href="data_exploration.html" />
+    <link rel="prev" title="Model Exploration" href="model_exploration.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -92,13 +92,18 @@
 </ul>
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="markdown.html">
-   Markdown Files
+  <a class="reference internal" href="data_exploration.html">
+   Data Exploration
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="data_exploration.html">
-   Data Exploration
+  <a class="reference internal" href="data_preparation.html">
+   Pipelines
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="model_exploration.html">
+   Model Exploration
   </a>
  </li>
  <li class="toctree-l1 current active">
@@ -288,6 +293,115 @@
     \(\chi^2\)
    </span>
    test for Statistical Independence
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#oversampling">
+   3. Oversampling
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smote-for-continuous-values">
+     3.1.
+     <strong>
+      SMOTE
+     </strong>
+     for continuous values
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smote-for-categorical-values">
+     3.2.
+     <strong>
+      SMOTE
+     </strong>
+     for categorical values
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#learning-theory">
+   4. Learning Theory
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#statistical-learning-framework">
+     4.1 Statistical Learning Framework
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-empirical-risk">
+     4.2 The Empirical Risk
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#overfitting">
+     4.3 Overfitting
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#recrifying-overfitting">
+     4.4. Recrifying Overfitting
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#finite-hypothesis-classes">
+       4.4.1 Finite Hypothesis Classes
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#realizability-assumption">
+       4.4.2 Realizability Assumption
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#i-i-d-assumption">
+       4.4.3 I.I.D. Assumption
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#putting-it-all-together">
+       4.4.4 Putting it all together
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pac-learning">
+     4.5. PAC Learning
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#generalizing-the-model-removing-the-realizability-assumption">
+     4.6 Generalizing the model - Removing the Realizability Assumption
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#generalizing-the-model-extending-further-than-binary-classification">
+     4.7 Generalizing the model - Extending further than Binary Classification
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#uniform-convergence">
+     4.8 Uniform Convergence
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#recap">
+     4.8 Recap
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#vc-dimension">
+     4.8 VC-dimension
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#k-fold-cross-validation">
+   5. K-Fold Cross Validation
   </a>
  </li>
 </ul>
@@ -778,6 +892,494 @@ p-value:		0.0012
 </div>
 <p>Since our p-value is smaller than the <span class="math notranslate nohighlight">\(\alpha\)</span> we decided, we end up rejecting the <span class="math notranslate nohighlight">\(H_0\)</span>, hence, the two random variables are <strong>NOT</strong> independent.</p>
 </div>
+<div class="section" id="oversampling">
+<span id="appendix-oversampling"></span><h2>3. Oversampling<a class="headerlink" href="#oversampling" title="Permalink to this headline">¶</a></h2>
+<p>The two most common oversampling techniques are <strong>SMOTE</strong> and <strong>ADASYN</strong>.
+Both techniques are based on the same oversampling algorithm:</p>
+<div class="math notranslate nohighlight">
+\[{\displaystyle x_{new} = x_i + \lambda \times (x_{zi} - x_i)}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(x_{new}\)</span> is the newly generated point</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_i\)</span> is a point from the orginal dataset</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_{zi}\)</span> is the <span class="math notranslate nohighlight">\(z_{th}\)</span> nearest neighbor of <span class="math notranslate nohighlight">\(x_i\)</span></p></li>
+</ul>
+<p>We are basically finding a new point as an interpolation of each point and one of it’s nearest neighbors.
+The main issue is that approach only works with continuous features.
+Since we are required to deal with continuous features <em>as well as</em> categorical features, we have to choose SMOTE, since ADASYN does not offer any solutions for the problem.</p>
+<div class="section" id="smote-for-continuous-values">
+<h3>3.1. <strong>SMOTE</strong> for continuous values<a class="headerlink" href="#smote-for-continuous-values" title="Permalink to this headline">¶</a></h3>
+<p>As we just said, SMOTE for contiuous values is pretty straight forward:</p>
+<ol class="simple">
+<li><p>Determine the oversampling ratio for each point in the minority class</p></li>
+<li><p>For each minority point:</p>
+<ol class="simple">
+<li><p>Find <span class="math notranslate nohighlight">\(k\)</span> nearest neighbors</p></li>
+<li><p>Choose <span class="math notranslate nohighlight">\(n\)</span> of the <span class="math notranslate nohighlight">\(k\)</span> neighbors and compute the new point coordinates</p></li>
+<li><p>Add the new points to the dataset</p></li>
+</ol>
+</li>
+</ol>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create fake data</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.41</span><span class="p">,</span> <span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.2</span><span class="p">,</span> <span class="mf">3.21</span><span class="p">,</span> <span class="mf">3.65</span><span class="p">,</span> <span class="mf">3.52</span><span class="p">,</span> <span class="mf">3.51</span><span class="p">,</span> <span class="mf">3.51</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">,</span> <span class="mf">3.3</span><span class="p">]</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Minority&#39;</span><span class="p">,</span> <span class="s1">&#39;Majority&#39;</span><span class="p">,</span> <span class="s1">&#39;Majority&#39;</span><span class="p">]</span>
+<span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">l</span> <span class="o">=</span> <span class="mf">0.7</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="n">a</span><span class="p">})</span>
+
+<span class="c1"># Build the new interpolated point</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+    <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">l</span> <span class="o">*</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">]),</span>  
+     <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">l</span> <span class="o">*</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]),</span>
+     <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="s1">&#39;New&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="n">size</span> <span class="o">=</span> <span class="mi">500000</span>
+<span class="c1"># Draw the neighbourhood</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span><span class="o">==</span><span class="mf">0.4</span><span class="p">],</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Draw the interpolation line</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">]],</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">5</span><span class="p">]],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Draw points</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&quot;tab10&quot;</span><span class="p">)</span>
+
+<span class="c1"># Some text</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">-</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="s2">&quot;$x_i$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">0.035</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;$x_</span><span class="si">{zi}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="s2">&quot;$x_</span><span class="si">{new}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/appendix_16_0.png" src="_images/appendix_16_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="smote-for-categorical-values">
+<h3>3.2. <strong>SMOTE</strong> for categorical values<a class="headerlink" href="#smote-for-categorical-values" title="Permalink to this headline">¶</a></h3>
+<p>Since it is not possible to interpolate categorical features, we can extend SMOTE to deal with this kind of data.
+The way the <em>imblearn</em> library does it is by adopting a <em>majority voting</em> technique among the k nearest neighbors of any given point.</p>
+</div>
+</div>
+<div class="section" id="learning-theory">
+<h2>4. Learning Theory<a class="headerlink" href="#learning-theory" title="Permalink to this headline">¶</a></h2>
+<p>In order to understand the meaning behind some procedures like <em>Training-Test Data Split</em> or <em>Cross Validation</em> we must give a brief introduction to some basic concepts of learning theory.</p>
+<div class="section" id="statistical-learning-framework">
+<h3>4.1 Statistical Learning Framework<a class="headerlink" href="#statistical-learning-framework" title="Permalink to this headline">¶</a></h3>
+<p>Let’s start by defining some important terms that we will need in the following chapters:</p>
+<ul class="simple">
+<li><p>Learner: The Machine Learning algorithm</p></li>
+<li><p>Domain set: The set of observations that we want to label <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> (in our case, the set of session recorded)</p></li>
+<li><p>Label set: The set of possible labels <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span> (in our case, <span class="math notranslate nohighlight">\(\{0, 1\}\)</span>)</p></li>
+<li><p>Training data: A finite sequence of labeled domain points <span class="math notranslate nohighlight">\(\displaystyle S = \left( \left(  \mathcal{x}_1, \mathcal{y}_1 \right) \dots \left( \mathcal{x}_m, \mathcal{y}_m \right) \right)\)</span></p></li>
+<li><p>Training data: A finite sequence of labeled domain points <span class="math notranslate nohighlight">\(S = \left( \left(  \mathcal{x}_1, \mathcal{y}_1 \right) \dots \left( \mathcal{x}_m, \mathcal{y}_m \right) \right)\)</span></p></li>
+<li><p>Learner’s output: The prediction rule obtained by the learner, trained on Training data <span class="math notranslate nohighlight">\(\mathcal{h} = \mathcal{X} \rightarrow \mathcal{Y}\)</span></p></li>
+<li><p>Data-Generating model: The probability distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> underlying <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and the <em>correct</em> labelling function <span class="math notranslate nohighlight">\(\mathcal{f}\ \text{s.t.}\ \mathcal{f}\left(\mathcal{x}_i\right)=\mathcal{y}_i\)</span></p></li>
+<li><p>Measure of success: The error of a prediction rule <span class="math notranslate nohighlight">\(\mathcal{h} = \mathcal{X} \rightarrow \mathcal{Y}\)</span></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[L_{\mathcal{D}, f}(h) \stackrel{\text { def }}{=} \underset{x \sim \mathcal{D}}{\mathbb{P}}[h(x) \neq f(x)] \stackrel{\text { def }}{=} \mathcal{D}(\{x: h(x) \neq f(x)\})\]</div>
+<p>Meaning that the error of <span class="math notranslate nohighlight">\(\mathcal{h}\)</span> is the probability of randomly choosing an example <span class="math notranslate nohighlight">\(\mathcal{x}\)</span> for which the prediction rule disagrees from the labelling function.</p>
+</div>
+<div class="section" id="the-empirical-risk">
+<h3>4.2 The Empirical Risk<a class="headerlink" href="#the-empirical-risk" title="Permalink to this headline">¶</a></h3>
+<p>The goal of our learner (algorithm) is to find the best predictor <span class="math notranslate nohighlight">\(h\)</span>. The goodness of the predictor is measured by means of the <em>error</em>. The main problem is that the error we just defined depends on the true data distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> and the labelling function <span class="math notranslate nohighlight">\(\mathcal{f}\)</span>, and both are not accessible by the learner.</p>
+<p>All that our learner sees is the training set <em>S</em>, which works like a small window on the real world <span class="math notranslate nohighlight">\(D\)</span> that he will never able to experience. For this reason, we are only able to build an approximation of that error, we call it <em>Empirical Error (Risk)</em>
+$<span class="math notranslate nohighlight">\(L_{S}(h) \stackrel{\text { def }}{=} \frac{\left|\left\{i \in[m]: h\left(x_{i}\right) \neq y_{i}\right\}\right|}{m}\)</span>$
+That is, the ratio of examples in which our rule agrees with with the labelling function. Consequently, we train our learner by minimizing the <em>Empirical Risk</em>, a process called <strong>Empirical Risk Minimization (ERM)</strong></p>
+</div>
+<div class="section" id="overfitting">
+<h3>4.3 Overfitting<a class="headerlink" href="#overfitting" title="Permalink to this headline">¶</a></h3>
+<p>The <strong>ERM</strong> technique, although very intuitive, may lead to overfitting.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_inner_points</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">n_outer_points</span> <span class="o">=</span> <span class="mi">40</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1"># Outer boundary</span>
+<span class="n">outer_circle</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">outer_circle</span><span class="p">)</span>
+<span class="c1"># Inner boundary</span>
+<span class="n">inner_circle</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">inner_circle</span><span class="p">)</span>
+
+<span class="c1"># Plot outer samples</span>
+<span class="n">angle_outer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_outer_points</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+<span class="n">radius_outer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_outer_points</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">radius_outer</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle_outer</span><span class="p">),</span> <span class="n">radius_outer</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle_outer</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="c1"># Plot inner samples</span>
+<span class="n">angle_inner</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_inner_points</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+<span class="n">radius_inner</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_inner_points</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">radius_inner</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle_inner</span><span class="p">),</span> <span class="n">radius_inner</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle_inner</span><span class="p">),</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/appendix_21_0.png" src="_images/appendix_21_0.png" />
+</div>
+</div>
+<p>Let’s imagine a bivariate dataset, where the <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> is the uniform distribution in the blue circle, and the labelling function <span class="math notranslate nohighlight">\(\mathcal{f}\)</span> determines the label to be 1 if the sample falls inside the red circle, 0 otherwise. (Note that the area of the red circle is <span class="math notranslate nohighlight">\(\pi\)</span> while the area of the blue circle is <span class="math notranslate nohighlight">\(2\pi\)</span>)</p>
+<p>Now consider the predictor:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}h_{S}(x)= \begin{cases}y_{i} &amp; \text { if } \exists i \in[m] \text { s.t. } x_{i}=x \\ 0 &amp; \text { otherwise. }\end{cases}\end{split}\]</div>
+<p>Which essentially is remembering by heart the training samples, and guessing label 0 for every unknown sample. This predictor has <em>empirical risk</em> <span class="math notranslate nohighlight">\(L_{\mathcal{S}}(h_s) = 0\)</span>, for this reason it can be chosen by an ERM algorighm. But if we take a look at the <em>true risk</em> (we can do it only because we built the underlying distribution ourselves) is <span class="math notranslate nohighlight">\(L_{\mathcal{D}}(h_s) = \frac{1}{2}\)</span></p>
+<p>We have found a predictor that performs perfectly on the training set, and very poorly on the true “world”.</p>
+</div>
+<div class="section" id="recrifying-overfitting">
+<h3>4.4. Recrifying Overfitting<a class="headerlink" href="#recrifying-overfitting" title="Permalink to this headline">¶</a></h3>
+<p>We have just shown that ERM is sensible to overfitting, we will now introduce some conditions to ERM that will guardantee us that if our predictor has good performance on the training set, it is <em>highly likely</em> to perform <em>well</em> over the underlying data distribution d.</p>
+<div class="section" id="finite-hypothesis-classes">
+<h4>4.4.1 Finite Hypothesis Classes<a class="headerlink" href="#finite-hypothesis-classes" title="Permalink to this headline">¶</a></h4>
+<p>A common solution to overfitting is to limit the search space of the ERM. This means choosing an hypothesis class <em>in advance</em>, over which the ERM will look for our best predictor <em>h</em></p>
+<div class="math notranslate nohighlight">
+\[h_S = \operatorname{ERM}_{\mathcal{H}}(S) \in \underset{h \in \mathcal{H}}{\operatorname{argmin}} L_{S}(h)\]</div>
+<p>We call <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> <em>Hypothesis class</em>, and our ERM now aims at finding the best <span class="math notranslate nohighlight">\(\mathcal{h} \in \mathcal{H}\)</span> that minimizes the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span>. Although this reduces overfitting, we are practically steering our ERM towards a predefinet set of predictors, hence we are introducing a form of bias called <em>inductive bias</em>.</p>
+</div>
+<div class="section" id="realizability-assumption">
+<h4>4.4.2 Realizability Assumption<a class="headerlink" href="#realizability-assumption" title="Permalink to this headline">¶</a></h4>
+<div class="math notranslate nohighlight">
+\[\exists \mathcal{h}^* \in \mathcal{h}\ \operatorname{s.t.}\ L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h^*\right)=0\]</div>
+<p>This means that there always exists an hypothesis in our finite hypothesis set, for which the True Error is zero. This implies</p>
+<ol class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{D}^{\mathcal{m}}\left(S:L_S\left(h^*\right)=0\right)=1\)</span> with probability 1, over the random samples <span class="math notranslate nohighlight">\(S\)</span> sampled according to <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>, labelled by <span class="math notranslate nohighlight">\(\mathcal{f}\)</span>, we have that the empirical error of <span class="math notranslate nohighlight">\(h^*\)</span> equals 0</p></li>
+<li><p><span class="math notranslate nohighlight">\(L_S\left(h_S\right)=0\)</span> for every ERM hypothesis, the empirical risk equals 0</p></li>
+</ol>
+</div>
+<div class="section" id="i-i-d-assumption">
+<h4>4.4.3 I.I.D. Assumption<a class="headerlink" href="#i-i-d-assumption" title="Permalink to this headline">¶</a></h4>
+<p>The samples in the training set are <em>independently and indentically distributed</em> according to <span class="math notranslate nohighlight">\(\mathcal{D}\)</span></p>
+</div>
+<div class="section" id="putting-it-all-together">
+<h4>4.4.4 Putting it all together<a class="headerlink" href="#putting-it-all-together" title="Permalink to this headline">¶</a></h4>
+<p>Since the training set is random, there is always a (small) probability that our sample is unrepresentative of the underlying <span class="math notranslate nohighlight">\(D\)</span>, We denote such probability as <span class="math notranslate nohighlight">\(\delta\)</span>, and call <span class="math notranslate nohighlight">\(\left(1-\delta\right)\)</span> the <em>confidence</em> of our prediction. Furthermore, since we can not guarantee a perfect prediction, we introduce the <em>accuracy</em> <span class="math notranslate nohighlight">\(\epsilon\)</span>. We now are able to define the failure of our learner as <span class="math notranslate nohighlight">\(L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h_S\right) &gt; \epsilon\)</span>.</p>
+<p>We are now interested in finding an upper bound to the probability of sampling an m-tuple of instances that will lead to faliure in learning a good predictor. The quantity we want to upper bound is</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D^m}\left(\{ S|_x : L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon\}\right)\tag{1}\]</div>
+<p>where <span class="math notranslate nohighlight">\(S|_x=\left(x_1, \dots, x_m\right)\)</span> are the instances of the training set.</p>
+<p>Let:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{H_B}\)</span> be the set of “<em>bad</em>” hypothesis <span class="math notranslate nohighlight">\(\mathcal{H_B}=\{h \in \mathcal{H}:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon\}\)</span>. <span class="math notranslate nohighlight">\(\mathcal{H_B}\)</span> is the set of hypothesis that leads to learner’s failure (N.B. defined with respect to the <strong>True</strong> error).</p></li>
+<li><p><span class="math notranslate nohighlight">\(M\)</span> be the set of “<em>misleading</em>” samples <span class="math notranslate nohighlight">\(M=\{S|_x:\exists h \in \mathcal{H}_B, L_S\left(h\right)=0\}\)</span>. <span class="math notranslate nohighlight">\(M\)</span> is the set of samples, for which a bad hypothesis (high <em>true</em> error) has a low <em>empirical</em> error.</p></li>
+</ul>
+<p>Recall:</p>
+<ul class="simple">
+<li><p>We are trying to bound <span class="math notranslate nohighlight">\(\mathcal{D^m}\left(\{ S|_x : L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon\}\right)\)</span></p></li>
+</ul>
+<p>Consider:</p>
+<ul class="simple">
+<li><p>The realizability assumption implies that: <span class="math notranslate nohighlight">\(L_S\left(h_S\right)=0\)</span></p></li>
+</ul>
+<p>This means that <span class="math notranslate nohighlight">\(L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon\)</span> can only happend if for some  <span class="math notranslate nohighlight">\(h \in \mathcal{H}_B\)</span> we have <span class="math notranslate nohighlight">\(L_S\left(h\right)=0\)</span> (this is because the bad hypothesis will be chosen via ERM only if it has empirical error equals 0 for realizability assumption). We can now say that the event above will only happen if our sample is in the set <span class="math notranslate nohighlight">\(M\)</span>.</p>
+<p>We have shown that:
+$<span class="math notranslate nohighlight">\(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \} \subseteq M\)</span>$
+(meaning that the set of samples for which we have learner’s failure is bounded by the size of the set of misleading samples)</p>
+<p>Hence:
+$<span class="math notranslate nohighlight">\(\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \}\right) \leq \mathcal{D^m}\left(M\right)\tag{2}\)</span>$
+(The probability of picking a sample that brings learner’s failure is bounded by the probability of picking a misleading sample)</p>
+<p>Consider:</p>
+<ul class="simple">
+<li><p>The equation <span class="math notranslate nohighlight">\(M=\{S|_x:\exists h \in \mathcal{H}_B, L_S\left(h\right)=0\}=\underset{h\in\mathcal{H}_B}{\bigcup}\{S|_x:L_S\left(h\right)=0\}\)</span></p></li>
+</ul>
+<p>Then</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \}\right)\leq\mathcal{D^m}\left(\underset{h\in\mathcal{H}_B}{\bigcup}\{S|_x:L_S\left(h\right)=0\}\right)\tag{3}\]</div>
+<p>Consider:</p>
+<ul class="simple">
+<li><p>The union bound <span class="math notranslate nohighlight">\(\mathcal{D}\left(A \cup B\right) \leq \mathcal{D}\left(A\right) +\mathcal{D}\left(B\right)\)</span></p></li>
+</ul>
+<p>Then</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \}\right) \leq \underset{h\in\mathcal{H}_B}\sum{\mathcal{D^m}\left(S|_x:L_S\left(h\right)=0\right)}\tag{4}\label{eq:4}\]</div>
+<p>Now, let’s bound each single summand on the right side.</p>
+<p>Fix:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(h \in \mathcal{H_B}\)</span></p></li>
+</ul>
+<p>Consider:</p>
+<ul class="simple">
+<li><p>The event <span class="math notranslate nohighlight">\(L_S\left(h\right)=0\)</span> indicates the case where our predictor <span class="math notranslate nohighlight">\(h\)</span> always agrees with the true labelling <span class="math notranslate nohighlight">\(f\)</span>, formally <span class="math notranslate nohighlight">\(\forall{i}, h\left(x_i\right)=\mathcal{f}\left(x_i\right)\)</span></p></li>
+</ul>
+<p>Then</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D^m}\left(S|_x:L_S\left(h\right)=0\right)=\mathcal{D^m}\left(\{S|_x:\forall{i}, h\left(x_i\right)=\mathcal{f}\left(x_i\right)\right\})\]</div>
+<p>Consider:</p>
+<ul class="simple">
+<li><p>The training samples are i.i.d.</p></li>
+</ul>
+<p>Then</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D^m}\left(\{S|_x:\forall{i}, h\left(x_i\right)=\mathcal{f}\left(x_i\right)\right\})=\underset{i=1}{\overset{m}{\prod}} \mathcal{D}\left(\{\mathcal{x}_i:h\left(\mathcal{x}_i\right)=\mathcal{f}\left(\mathcal{x}_i\right)\}\right)\]</div>
+<p>Remember:</p>
+<ul class="simple">
+<li><p>The definition of true risk: <span class="math notranslate nohighlight">\(L_{\mathcal{D}, f}(h) \stackrel{\text { def }}{=} \mathcal{D}(\{x: h(x) \neq f(x)\})\)</span></p></li>
+</ul>
+<p>Then, for each individual sampling of an element of the training set we have</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D}\left(\{\mathcal{x_i}:h\left(\mathcal{x_i}\right)=\mathcal{y_i}\}\right) = 1 - L_\left(\mathcal{D}, \mathcal{f}\right)\left(h\right) \leq 1 - \epsilon\]</div>
+<p>Where the last inequation follows from the fact that our <span class="math notranslate nohighlight">\(h \in \mathcal{H_B}\)</span></p>
+<p>Consider:</p>
+<ul class="simple">
+<li><p>the inequality <span class="math notranslate nohighlight">\(\left(1 - \epsilon\right)^m \leq e^{-\epsilon m}\)</span></p></li>
+</ul>
+<p>We now have proved that:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D^m}\left(S|_x:L_S\left(h\right)=0\right) \leq (1-e)^m \leq e^{-\epsilon m}\]</div>
+<p>Now, sostituting back in equation <span class="math notranslate nohighlight">\(\left(\ref{eq:4}\right)\)</span> we get</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \}\right) \leq \left|\mathcal{H_B}\right|e^{-\epsilon m}\tag{5}\]</div>
+<p>Consider:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\left|\mathcal{H_B}\right| \leq \left|\mathcal{H}\right|\)</span></p></li>
+</ul>
+<p>We conclude that</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \}\right) \leq \left|\mathcal{H}\right|e^{-\epsilon m}\tag{6}\]</div>
+<p><strong>—</strong></p>
+<p>Let</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{H} be a finite hypothesis class\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\delta \in \left(0, 1\right) \text{and} \epsilon &gt; 0\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(m\)</span> be an integer that satisfies <span class="math notranslate nohighlight">\(m \geq \frac{\log (|\mathcal{H}| / \delta)}{\epsilon}\)</span></p></li>
+</ul>
+<p>Then, for any labeling function <span class="math notranslate nohighlight">\(\mathcal{f}\)</span> and for any distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> for which the realizability assumption holds, with probability at least <span class="math notranslate nohighlight">\(1 - \delta\)</span> over the choice of an i.i.d. sample <span class="math notranslate nohighlight">\(S\)</span> of size <span class="math notranslate nohighlight">\(m\)</span>, we have that for every <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> hypothesis <span class="math notranslate nohighlight">\(h_S\)</span>, it holds that</p>
+<div class="math notranslate nohighlight">
+\[L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(H_S\right)\leq \epsilon\]</div>
+<p>The above statements mean that, for a training set of size <span class="math notranslate nohighlight">\(m\)</span> (<em>big enough</em>) and a <strong>finite</strong> hypothesis set <span class="math notranslate nohighlight">\(\mathcal{H}\)</span>, the <span class="math notranslate nohighlight">\(\operatorname{ERM_{\mathcal{H}}}\)</span> rule will be <em>probably</em> (with confindence <span class="math notranslate nohighlight">\(1 - \delta\)</span>) <em>approximately</em> (up to an error <span class="math notranslate nohighlight">\(\epsilon\)</span>) correct.</p>
+</div>
+</div>
+<div class="section" id="pac-learning">
+<h3>4.5. PAC Learning<a class="headerlink" href="#pac-learning" title="Permalink to this headline">¶</a></h3>
+<p>In the paragraph above we found out that for a finite hypothesis class, if the sample size <span class="math notranslate nohighlight">\(m\)</span> of the training set <span class="math notranslate nohighlight">\(S\)</span> that we feed to the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> in order to find our hypothesis <span class="math notranslate nohighlight">\(h_S\)</span> is <strong>big enough</strong>, then our <span class="math notranslate nohighlight">\(h_S\)</span> will be <strong>probably approximately correct</strong>.</p>
+<p>We can now define PAC Learnability as follows:</p>
+<div class="important admonition">
+<p class="admonition-title">PAC Learning</p>
+<p>A hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is PAC learnable if there exists a function <span class="math notranslate nohighlight">\(m_{\mathcal{H}}:(0,1)^{2} \rightarrow \mathbb{N}\)</span> and a learning algorithm that has the following properties <span class="math notranslate nohighlight">\(\forall \epsilon,\delta\in\left(0, 1\right), \forall \mathcal{D}\sim\mathcal{X}, \forall \mathcal{f}:\mathcal{X}\rightarrow\left(0, 1\right)\)</span> if the realizability assumption holds w.r.t. <span class="math notranslate nohighlight">\(\mathcal{H,D,f}\)</span> then when running the learning algorithm on <span class="math notranslate nohighlight">\(m \geq m_\mathcal{H}\left(\epsilon,\theta\right)\)</span> i.i.d. samples generated by <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> and labelled by <span class="math notranslate nohighlight">\(\mathcal{f}\)</span> the algorighm returns a hypothesis <span class="math notranslate nohighlight">\(h\)</span> such that with probability of at least <span class="math notranslate nohighlight">\(1-\theta\)</span> (probably) <span class="math notranslate nohighlight">\(L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h\right)\leq\epsilon\)</span> (approximately correct)</p>
+</div>
+<p>It is important to note that if <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is PAC learnable, there exists mode than 1 function <span class="math notranslate nohighlight">\(m_H\)</span> that satisfies the requirements for PAC learnability. Therefore, we will redefine the sample complexity to be the minimal integer that satisfies the requirements of PAC learning:</p>
+<div class="math notranslate nohighlight">
+\[m_{\mathcal{H}}(\epsilon, \delta) \leq\left\lceil\frac{\log (|\mathcal{H}| / \delta)}{\epsilon}\right\rceil\]</div>
+</div>
+<div class="section" id="generalizing-the-model-removing-the-realizability-assumption">
+<h3>4.6 Generalizing the model - Removing the Realizability Assumption<a class="headerlink" href="#generalizing-the-model-removing-the-realizability-assumption" title="Permalink to this headline">¶</a></h3>
+<p>The first step towards the generalization of the model is to remove the realizability assumption. Remember, the realizabilty assumption says that <span class="math notranslate nohighlight">\(\exists h^*\in\mathcal{H}:\mathcal{D}\left(\{h_*\left(\mathcal{x}\right)=\mathcal{f}\left(\mathcal{x}\right)\}\right)=1\)</span>. In many real problems, this is not the case. Furthermore, it is also unrealistic to suppose that the labels are fully determined by the labelling function <span class="math notranslate nohighlight">\(\mathcal{f}\)</span>.</p>
+<p>For this reason, from now on, we indicate the probablity distribution over <span class="math notranslate nohighlight">\(\mathcal{X} \times \mathcal{Y}\)</span>, were</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is our domain set as before, <span class="math notranslate nohighlight">\(\mathcal{D_x}\)</span> is the marginal over the unlabeled domain points</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{Y}\)</span> is a set of labels, <span class="math notranslate nohighlight">\(\mathcal{D\left(\left(x, y\right)|x\right)}\)</span> is the conditional over the labels for each domain point</p></li>
+</ul>
+<p>This makes <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> a <em>joint probability distribution</em> over the domain points and the labels.</p>
+<p>We can now rewrite some of the concept that we defined previously:</p>
+<ul class="simple">
+<li><p><strong>True Error</strong>: <span class="math notranslate nohighlight">\(L_\mathcal{D}\left(h\right) \overset{\operatorname{def}}{=} \mathcal{D}\left(\{\left(\mathcal{x, y}\right): h\left(\mathcal{x}\right)\neq\mathcal{y}\}\right)\)</span></p></li>
+<li><p><strong>Empirical Error</strong>: <span class="math notranslate nohighlight">\(L_{S}(h) \stackrel{\text { def }}{=} \frac{\left|\left\{i \in[m]: h\left(x_{i}\right) \neq y_{i}\right\}\right|}{m}\)</span></p></li>
+</ul>
+<p>We can now replace the realizability assumption by considering the following example:</p>
+<p>Given a probability distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> over <span class="math notranslate nohighlight">\(\mathcal{X} \times \{0, 1\}\)</span>, the best label predicting function from <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> to <span class="math notranslate nohighlight">\(\{0, 1\}\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}f_{\mathcal{D}}(x)= \begin{cases}1 &amp; \text { if } \mathbb{P}[y=1 \mid x] \geq 1 / 2 \\ 0 &amp; \text { otherwise }\end{cases}\end{split}\]</div>
+<p>The above classifier is called <em>Bayes classifier</em>, and it is the optimal predictor for every <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>, formally</p>
+<div class="math notranslate nohighlight">
+\[\forall g \ L_\mathcal{D}\left(\mathcal{f_D}\right)\leq L_\mathcal{D}\left(\mathcal{g}\right)\]</div>
+<p>However, the <em>Bayes Risk</em> can not once more be computed, as it depends on <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>. Since we can not hope to find a predictor that has a smaller error than the minimal possible (the one of the Bayes classifier), we require that the learning algorithm will find a predictor whose ierror is <em>not much larger</em> than the best possible error of a predictor <em>in some given benchmark hypothesis class</em></p>
+<div class="important admonition">
+<p class="admonition-title">Agnostic PAC Learning</p>
+<p>A hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is <strong>agnostic</strong> PAC learnable if there exists a function <span class="math notranslate nohighlight">\(m_{\mathcal{H}}:(0,1)^{2} \rightarrow \mathbb{N}\)</span> and a learning algorithm that has the following property: <span class="math notranslate nohighlight">\(\forall \epsilon,\theta\in\left(0, 1\right), \forall \mathcal{D}\sim\mathcal{X}\times\mathcal{Y}\)</span>, when running the learning algorithm on <span class="math notranslate nohighlight">\(m \geq m_\mathcal{H}\left(\epsilon,\delta\right)\)</span> i.i.d. samples generated by <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> the algorighm returns a hypothesis <span class="math notranslate nohighlight">\(h\)</span> such that, with probability of at least <span class="math notranslate nohighlight">\(1-\delta\)</span></p>
+<div class="math notranslate nohighlight">
+\[L_\mathcal{D}\left(h\right)\leq \underset{h^\prime\in\mathcal{H}}{\operatorname{min}} L_\mathcal{D}\left(h^\prime\right) +\epsilon\]</div>
+</div>
+<p>With the above definition we have relaxed the PAC learnable property, by removing the requirement for the learner to have a small error in absolute terms, and compared it to the best learner among the class of predictors that we choose.</p>
+</div>
+<div class="section" id="generalizing-the-model-extending-further-than-binary-classification">
+<h3>4.7 Generalizing the model - Extending further than Binary Classification<a class="headerlink" href="#generalizing-the-model-extending-further-than-binary-classification" title="Permalink to this headline">¶</a></h3>
+<p>The next relaxation we are going to perform over our model concerns the scope of the Learning Problem. To give an idea of what it means, let’s consider some examples of different learning tasks:</p>
+<ul class="simple">
+<li><p>Multiclass Classification: We do not require for our classification to be binary. We could think of document classification, where our <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is the set of all documents, and our <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span> is a large but finite set (e.g. Sport, Polithics, Kitchen, News). Our training sample still looks exactly the same as previously discussed, a finite sequence of pairs <span class="math notranslate nohighlight">\(\mathcal{(x_i, y_i)}\)</span>, and the learner’s output will still be a function <span class="math notranslate nohighlight">\(h_S:\mathcal{X}\rightarrow\mathcal{Y}\)</span>. As a metric we can use the probability, over pairs, that our predictor suggests a wrong label.</p></li>
+<li><p>Regression: In regression, the goal is to find a functional relationship between <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span>. For example, one could want to find a linear function that predicts a child’s weight at birth give some ultrasound measurements (e.g. head circumference, abdominal circumference and femur length). Our <span class="math notranslate nohighlight">\(\mathcal{X} \in \mathbb{R}^3\)</span> and the labels set, is the set of real numbers. Our training data still looks the same even in this task (a pair <span class="math notranslate nohighlight">\(\mathcal{\left(x_i, y_i\right)}\)</span>). However, the measure of success differs. We may evaluate the qualityb of a hypothesis function <span class="math notranslate nohighlight">\(h_S:\mathcal{X}\rightarrow\mathcal{Y}\)</span> using the <em>expected square difference</em> between the true labels and the predictor’s outputs:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[L_\mathcal{D}\left(h\right) \overset{\operatorname{def}}{=} \underset{\mathcal{\left(x, y\right)\sim D}}{\mathbb{E}} \left(h\left(\mathcal{x}\right)-\mathcal{y}\right)^2\]</div>
+<p>For this reason, we generalize our measure of success as follows:</p>
+<div class="important admonition">
+<p class="admonition-title">Generalized Loss Function</p>
+<p>Given any set <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> and some domain <span class="math notranslate nohighlight">\(Z\)</span> let <span class="math notranslate nohighlight">\(l\)</span> be any function <span class="math notranslate nohighlight">\(\ell:\mathcal{H}\times Z \rightarrow \mathbb{R}_+\)</span> we call such functions <em>loss functions</em>. (for classification problems, <span class="math notranslate nohighlight">\(Z=\mathcal{Z\times Y}\)</span>)</p>
+</div>
+<p>We can again rewrite the definitions of true and empirical risk</p>
+<p>We can now rewrite some of the concept that we defined previously:</p>
+<ul class="simple">
+<li><p><strong>True Risk</strong>: <span class="math notranslate nohighlight">\(L_\mathcal{D}\left(h\right) \overset{\operatorname{def}}{=} \underset{\mathcal{z\sim D}}{\mathbb{E}}\left[\ell\left(\mathcal{h, z}\right)\right]\)</span> (The risk is the expected value of the loss)</p></li>
+<li><p><strong>Empirical Error</strong>: <span class="math notranslate nohighlight">\(L_{S}(h) \overset{\operatorname{def}}{=} \frac{1}{m} \overset{m}{\underset{i=1}{\sum}}\ell\mathcal{\left(h,z_i\right)}\)</span> where <span class="math notranslate nohighlight">\(S=\mathcal{\left(z_1,\dots,z_m\right)\in Z_m}\)</span></p></li>
+</ul>
+<p>Let’s now write the loss for classification and regression tasks:</p>
+<ul class="simple">
+<li><p><strong>0-1 Loss</strong></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}\ell_{0-1}(h,(x, y)) \stackrel{\text { def }}{=} \begin{cases}0 &amp; \text { if } h(x)=y \\ 1 &amp; \text { if } h(x) \neq y\end{cases}\end{split}\]</div>
+<ul class="simple">
+<li><p><strong>Square Loss</strong></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\ell_{sq}\left(h, \left(\mathcal{x, y}\right)\right) \overset{\operatorname{def}}{=} \left(h\left(\mathcal{x}\right)-\mathcal{y}\right)^2\]</div>
+<p>To summarize:</p>
+<div class="important admonition">
+<p class="admonition-title">Agnostic PAC Learning for Genearl Loss Functions</p>
+<p>A hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is <strong>agnostic</strong> PAC learnable with respect to a set <span class="math notranslate nohighlight">\(Z\)</span> and a loss function <span class="math notranslate nohighlight">\(\ell:\mathcal{H}\times Z\rightarrow \mathbb{R}_+\)</span> if there exists a function <span class="math notranslate nohighlight">\(m_{\mathcal{H}}:(0,1)^{2} \rightarrow \mathbb{N}\)</span> and a learning algorithm that has the following property: <span class="math notranslate nohighlight">\(\forall \epsilon,\theta\in\left(0, 1\right), \forall \mathcal{D}\sim&gt;\)</span>, when running the learning algorithm on <span class="math notranslate nohighlight">\(m \geq m_\mathcal{H}\left(\epsilon,\delta\right)\)</span> i.i.d. samples generated by <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> the algorighm returns a hypothesis <span class="math notranslate nohighlight">\(h\)</span> such that, with probability of at least <span class="math notranslate nohighlight">\(1-\delta\)</span> (over
+the choice of the m training examples)</p>
+<div class="math notranslate nohighlight">
+\[L_\mathcal{D}\left(h\right)\leq \underset{h^\prime\in\mathcal{H}}{\operatorname{min}} L_\mathcal{D}\left(h^\prime\right) +\epsilon\]</div>
+<p>where <span class="math notranslate nohighlight">\(L_\mathcal{D}\left(h\right) = \mathbb{E}_{\mathcal{z\sim D}}\left[\ell\left(\mathcal{h, z}\right)\right]\)</span></p>
+</div>
+</div>
+<div class="section" id="uniform-convergence">
+<h3>4.8 Uniform Convergence<a class="headerlink" href="#uniform-convergence" title="Permalink to this headline">¶</a></h3>
+<p>Recall the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> paradigm given a hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span>:</p>
+<ol class="simple">
+<li><p>The <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> recieves a training sample <span class="math notranslate nohighlight">\(S\)</span></p></li>
+<li><p>The learner evaluates the <em>empirical</em> risk of each <span class="math notranslate nohighlight">\(h \in\mathcal{H}\)</span> over the training sample <span class="math notranslate nohighlight">\(S\)</span></p></li>
+<li><p>The learner outputs an <span class="math notranslate nohighlight">\(h\)</span> that minimizes the <em>empirical</em> risk.</p></li>
+</ol>
+<p>We then hope that this <span class="math notranslate nohighlight">\(h_S\)</span> is also a risk minimizer with respect to the <em>true data probability distribution</em> <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>. For that, it is enough to ensure that the empricial risk of all members of <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> are good approximations of their true risk.</p>
+<div class="important admonition">
+<p class="admonition-title"><span class="math notranslate nohighlight">\(\epsilon\)</span>-representative sample</p>
+<p>A training set <span class="math notranslate nohighlight">\(S\)</span> is called <span class="math notranslate nohighlight">\(\epsilon\)</span>-representative (w.r.t. domain <span class="math notranslate nohighlight">\(Z\)</span>, hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span>, loss function <span class="math notranslate nohighlight">\(\ell\)</span>, and distribuyion <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>) if</p>
+<div class="math notranslate nohighlight">
+\[\forall{h}\in\mathcal{H},\ \left|L_S\left(h\right)-L_D\left(h\right)\right|\leq{\epsilon}\]</div>
+</div>
+<p>Now assume that a training set <span class="math notranslate nohighlight">\(S\)</span> is <span class="math notranslate nohighlight">\(\frac{\epsilon}{2}\)</span>-representative, then any output of <span class="math notranslate nohighlight">\(\operatorname{ERM}_\mathcal{H}\left(S\right)\)</span>, namely, any <span class="math notranslate nohighlight">\(h_S\in \underset{h\in\mathcal{H}}{\operatorname{argmin}}L_S\left(h\right)\)</span> satisfies</p>
+<div class="math notranslate nohighlight">
+\[L_D\left(h_S\right) \leq \underset{h\in\mathcal{H}}{\operatorname{min}} L_D\left(h\right) + \epsilon\]</div>
+<p>Proof:</p>
+<div class="math notranslate nohighlight">
+\[L_{\mathcal{D}}\left(h_{S}\right) \overset{1}{\leq} L_{S}\left(h_{S}\right)+\frac{\epsilon}{2} \overset{2}{\leq} L_{S}(h)+\frac{\epsilon}{2} \overset{3}{\leq} L_{\mathcal{D}}(h)+\frac{\epsilon}{2}+\frac{\epsilon}{2}=L_{\mathcal{D}}(h)+\epsilon,\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(1\)</span> and <span class="math notranslate nohighlight">\(3\)</span> hold because <span class="math notranslate nohighlight">\(S\)</span> is <span class="math notranslate nohighlight">\(\epsilon\)</span>-representative: <span class="math notranslate nohighlight">\(\left|L_S\left(h\right)-L_D\left(h\right)\right|\leq{\epsilon}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(2\)</span> holds because <span class="math notranslate nohighlight">\(h_S\)</span> is an <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> predictor (the hypothesis which yields the minimum empirical risk)</p></li>
+</ul>
+<p>We can now say that to ensure that the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> rule is an agnorstic PAC learner, it is enough to show that with probability of at least <span class="math notranslate nohighlight">\(1-\theta\)</span> over the random choice of a training set, it will be an <span class="math notranslate nohighlight">\(\epsilon\)</span>-representative training set.</p>
+<p>As we introduced <span class="math notranslate nohighlight">\(m_\mathcal{H}\left(\delta, \epsilon\right)\)</span> for PAC learning, which told us the minimum sample complexity needed in order to <strong>approximately</strong> have (with confidence <span class="math notranslate nohighlight">\(1-\theta\)</span>) a <strong>correct</strong> learner (up to an error <span class="math notranslate nohighlight">\(\epsilon\)</span>), we now introduce</p>
+<div class="math notranslate nohighlight">
+\[m^{UC}_\mathcal{H}:\left(0, 1\right)^2\rightarrow\mathbb{N}\]</div>
+<div class="important admonition">
+<p class="admonition-title">Uniform Convergence</p>
+<p>We say that a hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> has the <em>uniform convergence</em> property (w.r.t a domain <span class="math notranslate nohighlight">\(Z\)</span> and a loss function <span class="math notranslate nohighlight">\(\ell\)</span>) if there exists a function <span class="math notranslate nohighlight">\(m^{UC}_\mathcal{H}:\left(0, 1\right)^2\rightarrow\mathbb{N}\)</span> such that for every <span class="math notranslate nohighlight">\(\epsilon,\delta\in\left(0, 1\right)\)</span> and for every probability distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> over <span class="math notranslate nohighlight">\(Z\)</span>, if <span class="math notranslate nohighlight">\(S\)</span> is a sample of <span class="math notranslate nohighlight">\(m \geq m^{UC}_\mathcal{H}\left(\epsilon,\theta\right)\)</span> examples, drawn i.i.d. according to <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>, then, with probability of at least <span class="math notranslate nohighlight">\(1-\delta\)</span>, <span class="math notranslate nohighlight">\(S\)</span> is <span class="math notranslate nohighlight">\(\epsilon\)</span>-representative (which in turn means that the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> rule is an agnostic PAC learner)</p>
+</div>
+<p>it follows that if a class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> has the uniform convergence property (meaning that for each <span class="math notranslate nohighlight">\(h\in\mathcal{H}\)</span> the there exists a function that gives us the minimum sample complexity that, with proability <span class="math notranslate nohighlight">\(1-\delta\)</span> over the sampling of the domain set, gives us a training set <span class="math notranslate nohighlight">\(S\)</span> which is <span class="math notranslate nohighlight">\(\epsilon\)</span>-representative) with a function <span class="math notranslate nohighlight">\(m^{UC}_\mathcal{H}\)</span> then the class is agnostically PAC learnable with sample complexity <span class="math notranslate nohighlight">\(m_\mathcal{H}\left(\epsilon,\delta\right) \leq m^{UC}_\mathcal{H}\left(\epsilon /2, \delta\right)\)</span>. Furthermore, in that case, the <span class="math notranslate nohighlight">\(\operatorname{ERM}_\mathcal{H}\)</span> paradigm is a succesful agnostic PAC learner for <span class="math notranslate nohighlight">\(\mathcal{H}\)</span></p>
+</div>
+<div class="section" id="recap">
+<h3>4.8 Recap<a class="headerlink" href="#recap" title="Permalink to this headline">¶</a></h3>
+<p>Below is a recap of the most important results achieved during this brief introduction</p>
+<p><img alt="resume" src="_images/pac.png" /></p>
+</div>
+<div class="section" id="vc-dimension">
+<h3>4.8 VC-dimension<a class="headerlink" href="#vc-dimension" title="Permalink to this headline">¶</a></h3>
+<p>The <em>Vapnik-Chervonenkis</em>(VC)-dimension is a property of a hypothesis class that gives the correct characterization of its learnability. In order to define the VC-dimension we first need to define a preliminary notion called <em>shattering</em></p>
+<div class="important admonition">
+<p class="admonition-title">Shattering</p>
+<p>Let <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> be a class of <span class="math notranslate nohighlight">\(\{0, 1\}\)</span> functions over some domain <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and let <span class="math notranslate nohighlight">\(A\subseteq\mathcal{X}\)</span>. We say that <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> shatters <span class="math notranslate nohighlight">\(A\)</span> if <span class="math notranslate nohighlight">\(\forall \mathcal{g}:A\rightarrow\{0, 1\} \exists h\in\mathcal{H}\ \operatorname{s.t.}\ \forall \mathcal{x} \in A,\ h\left(\mathcal{x}\right) = g\left(\mathcal{x}\right)\)</span></p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
+<span class="kn">import</span> <span class="nn">matplotlib.path</span> <span class="k">as</span> <span class="nn">mpath</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+
+<span class="c1"># fig = plt.figure()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="c1"># Domain X</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">8.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="s1">&#39;$\mathcal</span><span class="si">{X}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+
+<span class="c1"># Subset A</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patches</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">4.8</span><span class="p">,</span> <span class="mf">6.4</span><span class="p">,</span> <span class="s1">&#39;$A$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+
+<span class="c1"># 0-1 behaviour over A</span>
+<span class="n">x_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">y_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x_a</span><span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="mf">0.2</span> <span class="o">+</span> <span class="mi">5</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_a</span><span class="p">,</span> <span class="n">y_a</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">4.9</span><span class="p">,</span> <span class="mf">5.6</span><span class="p">,</span> <span class="s1">&#39;$\mathcal</span><span class="si">{g}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+
+<span class="c1"># 0-1 behaviour over X</span>
+<span class="n">x_x_left</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="n">y_x_left</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x_x_left</span><span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="mf">0.5</span> <span class="o">+</span> <span class="mi">5</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_x_left</span><span class="p">,</span> <span class="n">y_x_left</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">x_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">);</span>
+<span class="n">y_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x_a</span><span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="mf">0.2</span> <span class="o">+</span> <span class="mi">5</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_a</span><span class="p">,</span> <span class="n">y_a</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">x_x_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="n">y_x_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x_x_right</span><span class="o">*</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="mf">0.5</span> <span class="o">+</span> <span class="mi">5</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_x_right</span><span class="p">,</span> <span class="n">y_x_right</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">2.8</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;$\mathcal</span><span class="si">{h}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">)</span>
+<span class="c1"># Amplitude of the sine wave is sine of a variable like time</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/appendix_25_0.png" src="_images/appendix_25_0.png" />
+</div>
+</div>
+<p>In the figure above we can see a (green) function <span class="math notranslate nohighlight">\(\mathcal{g}:A\rightarrow\{0, 1\}\)</span> that represents a <span class="math notranslate nohighlight">\(\{0, 1\}\)</span> behaviour over <span class="math notranslate nohighlight">\(A\)</span>. And a function <span class="math notranslate nohighlight">\(h\)</span> defined over the domain <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> that agrees with the function <span class="math notranslate nohighlight">\(g\)</span> over the set of points <span class="math notranslate nohighlight">\(A\)</span>.</p>
+<div class="note admonition">
+<p class="admonition-title">Meaning of <span class="math notranslate nohighlight">\({0, 1}\)</span> behaviour</p>
+<p><span class="math notranslate nohighlight">\(\{0,1\}\)</span> behaviour in this settings means “<em>a way of splitting the set A in two subsets</em>”</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Function-Set duality</p>
+<p>There is equivalence between functions <span class="math notranslate nohighlight">\(\mathcal{h}:\mathcal{X}\rightarrow\{0, 1\}\)</span> and subsets <span class="math notranslate nohighlight">\(A\subseteq\mathcal{X}\)</span>. Given any <span class="math notranslate nohighlight">\(\mathcal{h}\)</span> I can define a set</p>
+<div class="math notranslate nohighlight">
+\[\forall{h}:\mathcal{X}\rightarrow\{0, 1\}\exists A_{\mathcal{h}}=\{\mathcal{x}\in\mathcal{X}:\mathcal{h}\left(\mathcal{x}\right)=1\}\]</div>
+<p>The relationship also works in the opposite direction:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\forall{A}\subseteq\mathcal{X}\ \exists h_A\left(\mathcal{x}\right)=\begin{cases}1 &amp; \text { if } x\in A \\ 0 &amp; \text { if } x \notin A \end{cases}\end{split}\]</div>
+</div>
+<p>We can now define the VC-Dimension</p>
+<div class="important admonition">
+<p class="admonition-title">Vapnik-Chervonenkis dimension</p>
+<p>The VC-dimension of a class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is defined as the size of the maximal shattered set.
+$<span class="math notranslate nohighlight">\(\operatorname{VCdim}\left(\mathcal{H}\right)\overset{\operatorname{def}}{=}\underset{A \operatorname{shattered by} \mathcal{H}}{\operatorname{max}} \left\lvert A\right\rvert \)</span>$</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">How to compute VC of <span class="math notranslate nohighlight">\(\mathcal{H}\)</span></p>
+<ul class="simple">
+<li><p>If I claim that <span class="math notranslate nohighlight">\(\operatorname{VCdim}\left(\mathcal{H}\right)\geq n\)</span> then I have to find at least 1 set of size <span class="math notranslate nohighlight">\(n\)</span> which is shattered</p></li>
+<li><p>If I claim that <span class="math notranslate nohighlight">\(\operatorname{VCdim}\left(\mathcal{H}\right)&lt; n\)</span> then I have to show that no matter how I pick <span class="math notranslate nohighlight">\(n\)</span> points, they will never be shattered by <span class="math notranslate nohighlight">\(\mathcal{h}\)</span></p></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="k-fold-cross-validation">
+<h2>5. K-Fold Cross Validation<a class="headerlink" href="#k-fold-cross-validation" title="Permalink to this headline">¶</a></h2>
+<p>The k-fold cross validation technique is designed to provide an accurate estimate of the true error without wasting too much data (as it happens in regular validation techniques). This method consists in dividng the original training dataset of size <span class="math notranslate nohighlight">\(m\)</span>, into <span class="math notranslate nohighlight">\(k\)</span> subsets of size <span class="math notranslate nohighlight">\(m/k\)</span>. Once for each fold, a fold gets removed from the starting set and used as validation, while the remaining <span class="math notranslate nohighlight">\(k-1\)</span> are used to train the model. Finally, the average of the empirical error computed on each fold is computed and considered as the average estimate of the true error. Usually, k-fold is used to perform model selection, and once the final model is found, it is then re-trained on the whole training set.</p>
+</div>
 </div>
 
     <script type="text/x-thebe-config">
@@ -805,7 +1407,7 @@ p-value:		0.0012
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="data_exploration.html" title="previous page">Data Exploration</a>
+    <a class='left-prev' id="prev-link" href="model_exploration.html" title="previous page">Model Exploration</a>
 
         </div>
         

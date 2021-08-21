@@ -1,0 +1,123 @@
+import pandas as pd
+df = pd.read_csv("dataset/online_shoppers_intention.csv")
+
+numerical_columns = ["Administrative","Administrative_Duration","Informational","Informational_Duration","ProductRelated","ProductRelated_Duration","BounceRates","ExitRates","PageValues","SpecialDay"]
+df[numerical_columns].describe()
+
+categorical_columns = ["OperatingSystems", "Browser", "Region", "TrafficType", "VisitorType", "Weekend", "Month", "Revenue"]
+pd.DataFrame(df[categorical_columns].nunique(), columns=["Uniques"]).transpose()
+
+pd.DataFrame(df.isnull().sum(), columns=["Missings"]).transpose()
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_style("darkgrid")
+
+fig, ax = plt.subplots(3, 3, figsize=(9, 12))
+ax = ax.ravel()
+
+df["all"] = 1
+for i, col in enumerate(numerical_columns):
+
+    # Special day is actually discrete
+    if col != "SpecialDay":
+        sns.violinplot(data=df, x='all', y=col, ax=ax[i], hue="Revenue", palette="muted", split=True)
+        ax[i].set_title(col)
+
+        ax[i].axes.get_xaxis().set_visible(False)
+plt.tight_layout()
+plt.show()
+
+import numpy as np
+numerical_columns = ["Administrative","Administrative_Duration","Informational","Informational_Duration","ProductRelated","ProductRelated_Duration","BounceRates","ExitRates","PageValues"]
+
+corr = df[numerical_columns].corr()
+fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+
+upper_mask = np.zeros_like(corr)
+upper_mask[np.tril_indices_from(upper_mask)] = True
+
+sns.heatmap(corr, mask=upper_mask, annot=True)
+
+plt.show()
+
+from matplotlib.colors import LinearSegmentedColormap
+from scipy.stats import chi2_contingency, chi2
+from itertools import product
+
+dep = []
+categorical_columns=["OperatingSystems", "Browser", "Region", "TrafficType", "VisitorType", "Weekend", "Month"]
+
+
+# Define colors
+colors = ["gray", "lightgray"]
+cmap = LinearSegmentedColormap.from_list('Custom', colors, len(colors))
+
+for i, (c1, c2) in enumerate(product(categorical_columns, repeat=2)):
+
+    # Build contingency table
+    crosstab = pd.crosstab(df[c1], df[c2])
+
+    # Compute the test statistic
+    chi, p, dof, expected = chi2_contingency(crosstab)
+
+    # interpret test-statistic
+    prob = 0.99
+    critical = chi2.ppf(prob, dof)
+
+    if abs(chi) >= critical:
+        dep.append(0)
+    else:
+        dep.append(1)
+
+# reshape the list to get a heatmap
+indep = np.array(dep).reshape((len(categorical_columns), len(categorical_columns)))
+
+# draw the heatmap
+fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+upper_mask = np.zeros_like(indep)
+upper_mask[np.tril_indices_from(upper_mask)] = True
+sns.heatmap(indep, xticklabels=categorical_columns, yticklabels=categorical_columns, mask=upper_mask, cmap=cmap, ax=ax)
+
+# Set the colorbar labels
+colorbar = ax.collections[0].colorbar
+colorbar.set_ticks([0.25,0.75])
+colorbar.set_ticklabels(['Dependent', 'Not Dependent'])
+
+plt.tight_layout()
+plt.show()
+
+df['Revenue_str'] = df['Revenue'].astype('int').astype('str')
+
+fg = sns.displot(x='Revenue_str' ,data=df, discrete=True, bins=[0, 1], hue='Revenue_str', legend=False, palette="muted")
+fg.axes[0][0].text(-0.15, df['Revenue'].eq(0).sum()//2-200, f"{df['Revenue'].eq(0).sum()*100/df.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].text(1-0.15, df['Revenue'].eq(1).sum()//2-200, f"{df['Revenue'].eq(1).sum()*100/df.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].set_xlabel('Revenue')
+plt.tight_layout()
+plt.show()
+
+df = df.drop(columns='Revenue_str');
+
+from imblearn.over_sampling import SMOTENC
+from sklearn.preprocessing import OrdinalEncoder
+
+# Transform categorical to ordinal
+text_columns = ['Month', 'VisitorType', 'Weekend', 'Revenue']
+enc = OrdinalEncoder()
+df[text_columns] = enc.fit_transform(df[text_columns]).astype(int)
+
+# get the smote object
+sm = SMOTENC(categorical_features=[c in categorical_columns for c in df.columns], k_neighbors=5, random_state=42)
+
+# Resample data
+df_x, df_y = sm.fit_resample(df.drop(columns=['Revenue']), df['Revenue'])
+df_y = pd.DataFrame({'Revenue': df_y})
+df_y['Revenue_str'] = df_y['Revenue'].astype('int').astype('str')
+
+# Plot class distribution
+fg = sns.displot(x='Revenue_str' ,data=df_y, discrete=True, bins=[0, 1], hue='Revenue_str', legend=False, palette="muted")
+fg.axes[0][0].text(-0.15, df_y['Revenue'].eq(0).sum()//2-200, f"{df_y['Revenue'].eq(0).sum()*100/df_y.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].text(1-0.15, df_y['Revenue'].eq(1).sum()//2-200, f"{df_y['Revenue'].eq(1).sum()*100/df_y.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].set_xlabel('Revenue')
+plt.tight_layout()
+plt.show()

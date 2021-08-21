@@ -17,57 +17,30 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-from matplotlib.colors import LinearSegmentedColormap
-from scipy.stats import chi2_contingency, chi2
-from itertools import product
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_style("darkgrid")
 
-dep = []
-categorical_columns=["OperatingSystems", "Browser", "Region", "TrafficType", "VisitorType", "Weekend", "Month"]
+fig, ax = plt.subplots(3, 3, figsize=(9, 12))
+ax = ax.ravel()
 
+df["all"] = 1
+for i, col in enumerate(numerical_columns):
+    
+    # Special day is actually discrete
+    if col != "SpecialDay":
+        sns.violinplot(data=df, x='all', y=col, ax=ax[i], hue="Revenue", , split=True)
+        ax[i].set_title(col)
 
-# Define colors
-colors = ["gray", "lightgray"]
-cmap = LinearSegmentedColormap.from_list('Custom', colors, len(colors))
-
-for i, (c1, c2) in enumerate(product(categorical_columns, repeat=2)):
-
-    # Build contingency table
-    crosstab = pd.crosstab(df[c1], df[c2])
-
-    # Compute the test statistic
-    chi, p, dof, expected = chi2_contingency(crosstab)
-
-    # interpret test-statistic
-    prob = 0.99
-    critical = chi2.ppf(prob, dof)
-
-    if abs(chi) >= critical:
-        dep.append(0)
-    else:
-        dep.append(1)
-
-# reshape the list to get a heatmap
-indep = np.array(dep).reshape((len(categorical_columns), len(categorical_columns)))
-
-# draw the heatmap
-<!-- plt.figure(figsize=(12, 9)) -->
-upper_mask = np.zeros_like(indep)
-upper_mask[np.tril_indices_from(upper_mask)] = True
-ax = sns.heatmap(indep, xticklabels=categorical_columns, yticklabels=categorical_columns, mask=upper_mask, cmap=cmap)
-
-# Set the colorbar labels
-colorbar = ax.collections[0].colorbar
-colorbar.set_ticks([0.25,0.75])
-colorbar.set_ticklabels(['Dependent', 'Not Dependent'])
-
+        ax[i].axes.get_xaxis().set_visible(False)
 plt.tight_layout()
 plt.show()
 ------------------
 
-[0;36m  File [0;32m"<ipython-input-7-2c6a16686f65>"[0;36m, line [0;32m34[0m
-[0;31m    <!-- plt.figure(figsize=(12, 9)) -->[0m
-[0m    ^[0m
+[0;36m  File [0;32m"<ipython-input-6-0576e5cd07b4>"[0;36m, line [0;32m13[0m
+[0;31m    sns.violinplot(data=df, x='all', y=col, ax=ax[i], hue="Revenue", , split=True)[0m
+[0m                                                                     ^[0m
 [0;31mSyntaxError[0m[0;31m:[0m invalid syntax
 
-SyntaxError: invalid syntax (<ipython-input-7-2c6a16686f65>, line 34)
+SyntaxError: invalid syntax (<ipython-input-6-0576e5cd07b4>, line 13)
 

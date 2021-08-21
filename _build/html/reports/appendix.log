@@ -17,60 +17,62 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-from matplotlib.colors import LinearSegmentedColormap
-from scipy.stats import chi2
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import matplotlib.path as mpath
 
-dep = []
-categorical_columns=["OperatingSystems", "Browser", "Region", "TrafficType", "VisitorType", "Weekend", "Month"]
+sns.set_style("darkgrid")
+
+# fig = plt.figure()
+fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+
+# Domain X
+ax.add_patch(patches.Rectangle((2, 2), 6, 6, fc='none', ec='blue'))
+ax.text(8.5, 4.5, '$\mathcal{X}$', fontsize=40, color='blue')
+
+# Subset A
+ax.add_patch(patches.Circle((5, 5), 1, fc='none', ec='red'))
+ax.text(4.8, 6.4, '$A$', fontsize=35, color='red')
+
+# 0-1 behaviour over A
+x_a = np.arange(4, 6, 0.01);
+y_a = np.sin(x_a*(4*np.pi))*0.2 + 5
+ax.plot(x_a, y_a, color='green', linewidth=5)
+ax.text(4.9, 5.6, '$\mathcal{g}$', fontsize=20, color='green')
+
+# 0-1 behaviour over X
+x_x_left = np.arange(2, 4, 0.01)
+y_x_left = np.sin(x_x*(4*np.pi))*0.5 + 5
+ax.plot(x_x_left, y_x_left, color='orange', linestyle='--', linewidth=3)
+
+x_a = np.arange(4, 6, 0.01);
+y_a = np.sin(x_a*(4*np.pi))*0.2 + 5
+ax.plot(x_a, y_a, color='orange', linestyle='--', linewidth=3)
+
+x_x_right = np.arange(6, 8, 0.01)
+y_x_right = np.sin(x_x*(4*np.pi))*0.5 + 5
+ax.plot(x_x_right, y_x_right, color='orange', linestyle='--', linewidth=3)
+
+ax.text(2.8, 6, '$\mathcal{h}$', fontsize=30, color='orange')
+# Amplitude of the sine wave is sine of a variable like time
 
 
-# Define colors
-colors = ["gray", "lightgray"]
-cmap = LinearSegmentedColormap.from_list('Custom', colors, len(colors))
-
-for i, (c1, c2) in enumerate(product(categorical_columns, repeat=2)):
-
-    # Build contingency table
-    crosstab = pd.crosstab(df[c1], df[c2])
-
-    # Compute the test statistic
-    chi, p, dof, expected = chi2_contingency(crosstab)
-
-    # interpret test-statistic
-    prob = 0.99
-    critical = chi2.ppf(prob, dof)
-
-    if abs(chi) >= critical:
-        dep.append(0)
-    else:
-        dep.append(1)
-
-# reshape the list to get a heatmap
-indep = np.array(dep).reshape((len(categorical_columns), len(categorical_columns)))
-
-# draw the heatmap
-plt.figure(figsize=(12, 9))
-upper_mask = np.zeros_like(indep)
-upper_mask[np.tril_indices_from(upper_mask)] = True
-ax = sns.heatmap(indep, xticklabels=categorical_columns, yticklabels=categorical_columns, mask=upper_mask, cmap=cmap)
-
-# Set the colorbar labels
-colorbar = ax.collections[0].colorbar
-colorbar.set_ticks([0.25,0.75])
-colorbar.set_ticklabels(['Dependent', 'Not Dependent'])
-
+plt.ylim((0, 10))
+plt.xlim((0, 10))
+ax.set_yticks([])
+ax.set_xticks([])
 plt.show()
 ------------------
 
-[0;31m---------------------------------------------------------------------------[0m
-[0;31mNameError[0m                                 Traceback (most recent call last)
-[0;32m<ipython-input-7-2539f45d6f35>[0m in [0;36m<module>[0;34m[0m
-[1;32m     10[0m [0mcmap[0m [0;34m=[0m [0mLinearSegmentedColormap[0m[0;34m.[0m[0mfrom_list[0m[0;34m([0m[0;34m'Custom'[0m[0;34m,[0m [0mcolors[0m[0;34m,[0m [0mlen[0m[0;34m([0m[0mcolors[0m[0;34m)[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
-[1;32m     11[0m [0;34m[0m[0m
-[0;32m---> 12[0;31m [0;32mfor[0m [0mi[0m[0;34m,[0m [0;34m([0m[0mc1[0m[0;34m,[0m [0mc2[0m[0;34m)[0m [0;32min[0m [0menumerate[0m[0;34m([0m[0mproduct[0m[0;34m([0m[0mcategorical_columns[0m[0;34m,[0m [0mrepeat[0m[0;34m=[0m[0;36m2[0m[0;34m)[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
-[0m[1;32m     13[0m [0;34m[0m[0m
-[1;32m     14[0m     [0;31m# Build contingency table[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+[0;31m------------------------------------------------------[0m
+[0;31mNameError[0m            Traceback (most recent call last)
+[0;32m<ipython-input-10-6f3208acdbea>[0m in [0;36m<module>[0;34m[0m
+[1;32m     24[0m [0;31m# 0-1 behaviour over X[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     25[0m [0mx_x_left[0m [0;34m=[0m [0mnp[0m[0;34m.[0m[0marange[0m[0;34m([0m[0;36m2[0m[0;34m,[0m [0;36m4[0m[0;34m,[0m [0;36m0.01[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0;32m---> 26[0;31m [0my_x_left[0m [0;34m=[0m [0mnp[0m[0;34m.[0m[0msin[0m[0;34m([0m[0mx_x[0m[0;34m*[0m[0;34m([0m[0;36m4[0m[0;34m*[0m[0mnp[0m[0;34m.[0m[0mpi[0m[0;34m)[0m[0;34m)[0m[0;34m*[0m[0;36m0.5[0m [0;34m+[0m [0;36m5[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m     27[0m [0max[0m[0;34m.[0m[0mplot[0m[0;34m([0m[0mx_x_left[0m[0;34m,[0m [0my_x_left[0m[0;34m,[0m [0mcolor[0m[0;34m=[0m[0;34m'orange'[0m[0;34m,[0m [0mlinestyle[0m[0;34m=[0m[0;34m'--'[0m[0;34m,[0m [0mlinewidth[0m[0;34m=[0m[0;36m3[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     28[0m [0;34m[0m[0m
 
-[0;31mNameError[0m: name 'product' is not defined
-NameError: name 'product' is not defined
+[0;31mNameError[0m: name 'x_x' is not defined
+NameError: name 'x_x' is not defined
 

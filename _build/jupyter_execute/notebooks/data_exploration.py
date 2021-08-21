@@ -95,7 +95,7 @@ for i, col in enumerate(numerical_columns):
     
     # Special day is actually discrete
     if col != "SpecialDay":
-        sns.violinplot(data=df, x='all', y=col, ax=ax[i], hue="Revenue", palette="muted", split=True)
+        sns.violinplot(data=df, x='all', y=col, ax=ax[i], hue="Revenue", , split=True)
         ax[i].set_title(col)
 
         ax[i].axes.get_xaxis().set_visible(False)
@@ -103,7 +103,7 @@ plt.tight_layout()
 plt.show()
 
 
-# In[7]:
+# In[118]:
 
 
 import numpy as np
@@ -148,7 +148,7 @@ ax.text(-0.45, mmax + 0.1, "Maximum", fontsize=12)
 plt.show()
 
 
-# In[8]:
+# In[119]:
 
 
 import numpy as np
@@ -166,7 +166,7 @@ sns.violinplot(y=x, ax=ax, whis=1.5)
 plt.show()
 
 
-# In[9]:
+# In[120]:
 
 
 from scipy.stats import norm
@@ -222,13 +222,13 @@ plt.show()
 
 # ## Correlation
 
-# In[10]:
+# In[121]:
 
 
 corr = df[numerical_columns].corr()
 
 
-# In[11]:
+# In[122]:
 
 
 fig, ax = plt.subplots(1, 1, figsize=(8, 6))
@@ -241,14 +241,14 @@ ax = sns.heatmap(corr, mask=upper_mask, annot=True)
 plt.show()
 
 
-# In[12]:
+# In[123]:
 
 
 numerical_columns = ["Administrative","Administrative_Duration","Informational","Informational_Duration","ProductRelated","ProductRelated_Duration","BounceRates","ExitRates","PageValues"]
 # sns.pairplot(df[numerical_columns])
 
 
-# In[13]:
+# In[124]:
 
 
 from scipy.stats import chi2_contingency, chi2
@@ -261,25 +261,25 @@ encoder = OrdinalEncoder()
 df[to_be_encoded] = encoder.fit_transform(df[to_be_encoded])
 
 
-# In[14]:
+# In[125]:
 
 
 data_crosstab = pd.crosstab(df['VisitorType'], df['Weekend'])
 
 
-# In[15]:
+# In[126]:
 
 
 data_crosstab
 
 
-# In[16]:
+# In[127]:
 
 
 chi, p, dof, expected = chi2_contingency(data_crosstab)
 
 
-# In[17]:
+# In[128]:
 
 
 # interpret test-statistic
@@ -291,7 +291,7 @@ else:
     print(f'Independent (fail to reject H0)')
 
 
-# In[18]:
+# In[129]:
 
 
 df_fake = pd.DataFrame(columns=["shoes", "podium"])
@@ -319,7 +319,7 @@ crosstab = pd.crosstab(df_fake['shoes'], df_fake['podium'])
 crosstab
 
 
-# In[19]:
+# In[130]:
 
 
 chi_stat, p, dof, expected = chi2_contingency(crosstab)
@@ -329,7 +329,7 @@ critical = chi2.ppf(prob, dof)
 print(chi_stat, p, critical, dof, expected)
 
 
-# In[20]:
+# In[131]:
 
 
 
@@ -348,7 +348,7 @@ ax.text(24, 0.02, f"p = {p:.4f}", fontsize=18, color='b')
 plt.show()
 
 
-# In[21]:
+# In[132]:
 
 
 if abs(chi_stat) >= critical:
@@ -363,7 +363,7 @@ else:
 
 
 
-# In[22]:
+# In[133]:
 
 
 from matplotlib.colors import LinearSegmentedColormap
@@ -410,19 +410,35 @@ colorbar.set_ticklabels(['Dependent', 'Not Dependent'])
 plt.show()
 
 
-# In[23]:
+# In[134]:
 
 
 indep = np.array(dep).reshape((len(categorical_columns), len(categorical_columns)))
 
 
-# In[24]:
+# In[135]:
 
 
 upper_mask = np.zeros_like(indep)
 upper_mask[np.tril_indices_from(upper_mask)] = True
 
 sns.heatmap(indep, xticklabels=categorical_columns, yticklabels=categorical_columns, mask=upper_mask)
+
+
+# ## Class imbalance
+
+# In[152]:
+
+
+df['Revenue_str'] = df['Revenue'].astype('int').astype('str')
+
+fg = sns.displot(x='Revenue_str' ,data=df, discrete=True, bins=[0, 1], hue='Revenue_str', legend=False, palette="muted")
+fg.axes[0][0].text(-0.15, df['Revenue'].eq(0).sum()//2-200, f"{df['Revenue'].eq(0).sum()*100/df.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].text(1-0.15, df['Revenue'].eq(1).sum()//2-200, f"{df['Revenue'].eq(1).sum()*100/df.shape[0]:.2f}%", fontsize=12, color='w')
+fg.axes[0][0].set_xlabel('Revenue')
+plt.tight_layout()
+plt.show()
+df.drop(columns='Revenue_str');
 
 
 # In[ ]:

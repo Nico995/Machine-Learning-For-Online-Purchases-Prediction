@@ -135,8 +135,7 @@ print("Here is some code to execute")
 ```
 ````
 
-
-```{code-cell}
+```{code-cell} ipython3
 :tags: [hide-input]
 
 print("Here is some code to execute")

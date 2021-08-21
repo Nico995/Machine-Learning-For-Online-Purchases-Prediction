@@ -7,5 +7,7 @@ chapters:
 # - file: markdown
 # - file: notebooks
 - file: data_exploration
+- file: data_preparation
+- file: model_exploration
 - file: appendix
 # - file: notebooks/appendix

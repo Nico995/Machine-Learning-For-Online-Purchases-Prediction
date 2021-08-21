@@ -1,0 +1,42 @@
+Traceback (most recent call last):
+  File "/home/nicola/.pyenv/versions/3.8.5/envs/cuda/lib/python3.8/site-packages/jupyter_cache/executors/utils.py", line 51, in single_nb_execution
+    executenb(
+  File "/home/nicola/.pyenv/versions/3.8.5/envs/cuda/lib/python3.8/site-packages/nbclient/client.py", line 1112, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/nicola/.pyenv/versions/3.8.5/envs/cuda/lib/python3.8/site-packages/nbclient/util.py", line 74, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/home/nicola/.pyenv/versions/3.8.5/envs/cuda/lib/python3.8/site-packages/nbclient/util.py", line 53, in just_run
+    return loop.run_until_complete(coro)
+  File "/home/nicola/.pyenv/versions/3.8.5/lib/python3.8/asyncio/base_events.py", line 616, in run_until_complete
+    return future.result()
+  File "/home/nicola/.pyenv/versions/3.8.5/envs/cuda/lib/python3.8/site-packages/nbclient/client.py", line 553, in async_execute
+    await self.async_execute_cell(
+  File "/home/nicola/.pyenv/versions/3.8.5/envs/cuda/lib/python3.8/site-packages/nbclient/client.py", line 857, in async_execute_cell
+    self._check_raise_for_error(cell, exec_reply)
+  File "/home/nicola/.pyenv/versions/3.8.5/envs/cuda/lib/python3.8/site-packages/nbclient/client.py", line 760, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+from imblearn.over_sampling import SMOTENC
+
+categorical_features = ['Month', 'OperatingSystems', 'Browser', 'Region', 'TrafficType', 'VisitorType', 'Weekend']
+sm = SMOTENC(categorical_features=[c in categorical_features for c in df_train.columns])
+
+x_train_resampled, y_train_resampled = sm.fit_resample(x_train, y_train)
+# df_train_resampled = pd.concat((x_train_resampled, y_train_resampled), axis=1)
+
+print(f'Starting size: {x_train.shape}   =>  Ovesampled Training size: {x_train_resampled.shape}')
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
+[0;32m<ipython-input-4-5c42a50505d2>[0m in [0;36m<module>[0;34m[0m
+[1;32m      2[0m [0;34m[0m[0m
+[1;32m      3[0m [0mcategorical_features[0m [0;34m=[0m [0;34m[[0m[0;34m'Month'[0m[0;34m,[0m [0;34m'OperatingSystems'[0m[0;34m,[0m [0;34m'Browser'[0m[0;34m,[0m [0;34m'Region'[0m[0;34m,[0m [0;34m'TrafficType'[0m[0;34m,[0m [0;34m'VisitorType'[0m[0;34m,[0m [0;34m'Weekend'[0m[0;34m][0m[0;34m[0m[0;34m[0m[0m
+[0;32m----> 4[0;31m [0msm[0m [0;34m=[0m [0mSMOTENC[0m[0;34m([0m[0mcategorical_features[0m[0;34m=[0m[0;34m[[0m[0mc[0m [0;32min[0m [0mcategorical_features[0m [0;32mfor[0m [0mc[0m [0;32min[0m [0mdf_train[0m[0;34m.[0m[0mcolumns[0m[0;34m][0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m      5[0m [0;34m[0m[0m
+[1;32m      6[0m [0mx_train_resampled[0m[0;34m,[0m [0my_train_resampled[0m [0;34m=[0m [0msm[0m[0;34m.[0m[0mfit_resample[0m[0;34m([0m[0mx_train[0m[0;34m,[0m [0my_train[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mNameError[0m: name 'df_train' is not defined
+NameError: name 'df_train' is not defined
+
