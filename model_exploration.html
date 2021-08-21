@@ -261,8 +261,18 @@
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#pruning-a-tree">
-     2.2 Pruning a Tree
+    <a class="reference internal nav-link" href="#from-trees-to-forests">
+     2.2. From Trees to Forests
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#bagging-and-cv">
+     2.3 Bagging and CV
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     2.4 Application
     </a>
    </li>
   </ul>
@@ -459,17 +469,6 @@ The last equation can be solved via quadratic programming.</p>
         <span class="p">(</span><span class="s1">&#39;SMOTENC&#39;</span><span class="p">,</span> <span class="n">SMOTENC</span><span class="p">(</span><span class="n">categorical_features</span><span class="o">=</span><span class="n">categorical_indices</span><span class="p">)),</span>
         <span class="p">(</span><span class="s1">&#39;Classifier&#39;</span><span class="p">,</span> <span class="n">SVC</span><span class="p">())</span>
     <span class="p">])</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
-
-<span class="c1"># Here we define the subset of parameters to use in the gridsearch model selection technique</span>
-<span class="n">param_grid</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s1">&#39;Classifier__C&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
-        <span class="s1">&#39;Classifier__kernel&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;rbf&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;Classifier__gamma&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;auto&#39;</span><span class="p">]</span>
-    <span class="p">}</span>
-<span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -482,7 +481,18 @@ The last equation can be solved via quadratic programming.</p>
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># linear_search = GridSearchCV(clf, param_grid, cv=5, n_jobs=6, verbose=5).fit(x_train, y_train)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+
+<span class="c1"># Here we define the subset of parameters to use in the gridsearch model selection technique</span>
+<span class="n">param_grid</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;Classifier__C&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+        <span class="s1">&#39;Classifier__kernel&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;rbf&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;Classifier__gamma&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;auto&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="c1"># linear_search = GridSearchCV(clf, param_grid, cv=5, n_jobs=6, verbose=5).fit(x_train, y_train)</span>
 <span class="c1"># linear_search.cv_results_</span>
 </pre></div>
 </div>
@@ -497,10 +507,129 @@ The last equation can be solved via quadratic programming.</p>
 <div class="section" id="growing-a-tree">
 <h3>2.1. Growing a Tree<a class="headerlink" href="#growing-a-tree" title="Permalink to this headline">¶</a></h3>
 <p>When building a tree, we start from the whole training set. Then we build recursively either a child or a leaf. Leafs are built when the labels of the remaining training set have all the same label (we are in a binary classification example) or when we have no samples left, while children are built when the remaining samples have mixed labels. When a child node is required, the threhold rule is built by considering some <em>Gain measure</em>, where we select the threshold on the feature that produces the maximum gain over the remaining samples. We then generate the two new children, and split our training set on the newly found feature with the newly found threshold. We go on until we encounter a leaf, and then backtrack.</p>
+<p>This technique tends to build very big trees, for this reason some pruning techniques must be applied to limit the overfitting.</p>
 </div>
-<div class="section" id="pruning-a-tree">
-<h3>2.2 Pruning a Tree<a class="headerlink" href="#pruning-a-tree" title="Permalink to this headline">¶</a></h3>
-<p>In order to avoid the aforementioned problem of huge trees with high VC dimension, we must</p>
+<div class="section" id="from-trees-to-forests">
+<h3>2.2. From Trees to Forests<a class="headerlink" href="#from-trees-to-forests" title="Permalink to this headline">¶</a></h3>
+<p>A Random Forest is an <em>ensamble</em> of trees. Each tree is built by applying the same algorithm <span class="math notranslate nohighlight">\(A\)</span> over a training set <span class="math notranslate nohighlight">\(S^\prime\)</span> obtained by uniform sampling over <span class="math notranslate nohighlight">\(S\)</span> with replacement (<em>bagging</em>). Since if we only applied bagging to the samples, we would end up with very similarly structured tree (the first split would always be the same with respect to some metric), we also need to apply <em>feature bagging</em>. So we sample the <em>features</em> to be used, by choosing <span class="math notranslate nohighlight">\(k\)</span> features uniformly among the starting <span class="math notranslate nohighlight">\(d\)</span> features.</p>
+</div>
+<div class="section" id="bagging-and-cv">
+<h3>2.3 Bagging and CV<a class="headerlink" href="#bagging-and-cv" title="Permalink to this headline">¶</a></h3>
+<p>When applying the random forest algorithm with cross validation (and grid seach) the whole process becomes quite hard to picture, for this reason, below there is a visual recap of the whole process</p>
+<p><img alt="trees_cv" src="_images/trees-cv.png" /></p>
+</div>
+<div class="section" id="id1">
+<h3>2.4 Application<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./dataset/online_shoppers_intention.csv&#39;</span><span class="p">)</span>
+<span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Revenue&#39;</span><span class="p">),</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;Revenue&#39;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.compose</span> <span class="kn">import</span> <span class="n">ColumnTransformer</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span><span class="p">,</span> <span class="n">MinMaxScaler</span><span class="p">,</span> <span class="n">OneHotEncoder</span>
+
+<span class="n">textual_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Month&#39;</span><span class="p">,</span> <span class="s1">&#39;VisitorType&#39;</span><span class="p">,</span> <span class="s1">&#39;Weekend&#39;</span><span class="p">]</span>
+<span class="n">categorical_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Month&#39;</span><span class="p">,</span> <span class="s1">&#39;OperatingSystems&#39;</span><span class="p">,</span> <span class="s1">&#39;Browser&#39;</span><span class="p">,</span> <span class="s1">&#39;Region&#39;</span><span class="p">,</span> <span class="s1">&#39;TrafficType&#39;</span><span class="p">,</span> <span class="s1">&#39;VisitorType&#39;</span><span class="p">,</span> <span class="s1">&#39;Weekend&#39;</span><span class="p">]</span>
+<span class="n">numerical_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Administrative&#39;</span><span class="p">,</span> <span class="s1">&#39;Administrative_Duration&#39;</span><span class="p">,</span> <span class="s1">&#39;Informational&#39;</span><span class="p">,</span> <span class="s1">&#39;Informational_Duration&#39;</span><span class="p">,</span> <span class="s1">&#39;ProductRelated&#39;</span><span class="p">,</span> <span class="s1">&#39;ProductRelated_Duration&#39;</span><span class="p">,</span> <span class="s1">&#39;BounceRates&#39;</span><span class="p">,</span> <span class="s1">&#39;ExitRates&#39;</span><span class="p">,</span> <span class="s1">&#39;PageValues&#39;</span><span class="p">]</span>
+
+<span class="n">column_transformer</span> <span class="o">=</span> <span class="n">ColumnTransformer</span><span class="p">([</span>
+        <span class="p">(</span><span class="s1">&#39;OrdinalEncoder&#39;</span><span class="p">,</span> <span class="n">OrdinalEncoder</span><span class="p">(),</span> <span class="n">textual_columns</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;MinMaxScaler&#39;</span><span class="p">,</span> <span class="n">MinMaxScaler</span><span class="p">(),</span> <span class="n">numerical_columns</span><span class="p">),</span>
+<span class="c1">#         (&#39;OneHotEncoder&#39;, OneHotEncoder(), categorical_columns),</span>
+    <span class="p">],</span>
+    <span class="n">remainder</span><span class="o">=</span><span class="s1">&#39;passthrough&#39;</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">imblearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">imblearn.over_sampling</span> <span class="kn">import</span> <span class="n">SMOTENC</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+
+<span class="n">categorical_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Month&#39;</span><span class="p">,</span> <span class="s1">&#39;OperatingSystems&#39;</span><span class="p">,</span> <span class="s1">&#39;Browser&#39;</span><span class="p">,</span> <span class="s1">&#39;Region&#39;</span><span class="p">,</span> <span class="s1">&#39;TrafficType&#39;</span><span class="p">,</span> <span class="s1">&#39;VisitorType&#39;</span><span class="p">,</span> <span class="s1">&#39;Weekend&#39;</span><span class="p">]</span>
+<span class="n">categorical_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="ow">in</span> <span class="n">categorical_features</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df_train</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+
+<span class="n">clf</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+    <span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;ColumnTransformer&#39;</span><span class="p">,</span> <span class="n">column_transformer</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;SMOTENC&#39;</span><span class="p">,</span> <span class="n">SMOTENC</span><span class="p">(</span><span class="n">categorical_features</span><span class="o">=</span><span class="n">categorical_indices</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s1">&#39;Classifier&#39;</span><span class="p">,</span> <span class="n">RandomForestClassifier</span><span class="p">())</span>
+    <span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Below there is a list of the parameters accepted by Sklearn’s Support Vector Classifiers
+​</p>
+<ul class="simple">
+<li><p><strong>n_estimators</strong>: The number of trees to grow inside the forest.</p></li>
+<li><p><strong>criterion</strong>: The criterion used to perform the split in the nodes.</p></li>
+<li><p><strong>max_depth</strong>: Limits the size of the tree (lower values reduce overfitting)</p></li>
+<li><p><strong>min_samples_split</strong>: The mimimum amount of samples in a node to allow a further split (high values reduce overfitting)</p></li>
+<li><p><strong>min_samples_leaf</strong>: The minimum number of samples in both branches for a given node (high values reduce overfitting)</p></li>
+<li><p><strong>max_features</strong>: The maximum number of features to use when splitting the nodes (maximum size for feature bagging)</p></li>
+<li><p><strong>bootrtrap</strong>: Whether to use bootstrap when buildig trees, or use the entire dataset each time.</p></li>
+<li><p><strong>oob_score</strong>: Whether to use out-of-bag-samples to estimate the generalization score. (not sure how it works when applying cross validation)
+​</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+
+<span class="c1"># Here we define the subset of parameters to use in the gridsearch model selection technique</span>
+<span class="n">param_grid</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;Classifier__n_estimators&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
+        <span class="s1">&#39;Classifier__criterion&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;gini&#39;</span><span class="p">,</span> <span class="s1">&#39;entropy&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;Classifier__max_depth&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
+        <span class="s1">&#39;Classifier__max_features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="s1">&#39;sqrt&#39;</span><span class="p">,</span> <span class="s1">&#39;log2&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;Classifier__oob_score&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+        <span class="s1">&#39;Classifier__random_state&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">42</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="c1"># Since I have to run every notebook each time I want to update the whole jupyter-book, and I have very limited computational</span>
+<span class="c1"># resources, I will comment the actual training and report only the best configuration found.</span>
+<span class="c1"># Since I fixed the random state, it should be very easy to reproduce the results.</span>
+
+<span class="c1"># linear_search = GridSearchCV(clf, param_grid, cv=5, n_jobs=6, verbose=5).fit(x_train, y_train)</span>
+<span class="c1"># linear_search.cv_results_</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;best model &amp; score&#39;</span><span class="p">)</span>
+<span class="c1"># pprint(linear_search.best_params_, compact=True)</span>
+<span class="c1"># print(linear_search.best_score_)</span>
+<span class="n">pprint</span><span class="p">({</span><span class="s1">&#39;Classifier__criterion&#39;</span><span class="p">:</span> <span class="s1">&#39;gini&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Classifier__max_depth&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+ <span class="s1">&#39;Classifier__max_features&#39;</span><span class="p">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Classifier__n_estimators&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+ <span class="s1">&#39;Classifier__oob_score&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+ <span class="s1">&#39;Classifier__random_state&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="mf">0.8687141522110355</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>best model &amp; score
+{&#39;Classifier__criterion&#39;: &#39;gini&#39;,
+ &#39;Classifier__max_depth&#39;: 50,
+ &#39;Classifier__max_features&#39;: &#39;auto&#39;,
+ &#39;Classifier__n_estimators&#39;: 50,
+ &#39;Classifier__oob_score&#39;: True,
+ &#39;Classifier__random_state&#39;: 42}
+0.8687141522110355
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>

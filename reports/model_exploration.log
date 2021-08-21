@@ -17,20 +17,27 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-
-fig1 = plt.figure()
-ax1 = fig1.add_subplot(111, aspect='equal')
-ax1.add_patch(
-    patches.Rectangle((0, 0), width, height))
+print('best model & score')
+# pprint(linear_search.best_params_, compact=True)
+# print(linear_search.best_score_)
+pprint({'Classifier__criterion': 'gini',
+ 'Classifier__max_depth': 50,
+ 'Classifier__max_features': 'auto',
+ 'Classifier__n_estimators': 50,
+ 'Classifier__oob_score': True,
+ 'Classifier__random_state': 42})
+print(0.8687141522110355)
 ------------------
 
-[0;31m------------------------------------------------------[0m
-[0;31mNameError[0m            Traceback (most recent call last)
-[0;32m<ipython-input-2-956bfa14e2e9>[0m in [0;36m<module>[0;34m[0m
-[1;32m      2[0m [0max1[0m [0;34m=[0m [0mfig1[0m[0;34m.[0m[0madd_subplot[0m[0;34m([0m[0;36m111[0m[0;34m,[0m [0maspect[0m[0;34m=[0m[0;34m'equal'[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
-[1;32m      3[0m ax1.add_patch(
-[0;32m----> 4[0;31m     patches.Rectangle((0, 0), width, height))
-[0m
-[0;31mNameError[0m: name 'patches' is not defined
-NameError: name 'patches' is not defined
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
+[0;32m<ipython-input-6-44284ad06cff>[0m in [0;36m<module>[0;34m[0m
+[1;32m      2[0m [0;31m# pprint(linear_search.best_params_, compact=True)[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      3[0m [0;31m# print(linear_search.best_score_)[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+[0;32m----> 4[0;31m pprint({'Classifier__criterion': 'gini',
+[0m[1;32m      5[0m  [0;34m'Classifier__max_depth'[0m[0;34m:[0m [0;36m50[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      6[0m  [0;34m'Classifier__max_features'[0m[0;34m:[0m [0;34m'auto'[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mNameError[0m: name 'pprint' is not defined
+NameError: name 'pprint' is not defined
 
