@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# (chapters:model_exploration)=
 # # Model Exploration
 # 
 # This section is **not** called model selection because our final goal is not to find the model with the best average of the true error estimation. We instead aim to showcase the common Data Science pipeline and try multiple models, showing at the same time the programming side and the mathematical side of them.

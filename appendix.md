@@ -8,11 +8,12 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.10.3
 kernelspec:
-  display_name: Python 3
+  display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
 
+(chapters:appendix)=
 # Appendix
 In this page we can find further development of concepts used in previous chapters.
 
@@ -282,7 +283,7 @@ Where:
 * ${\displaystyle p_{{i\cdot }}={\frac {O_{{i\cdot }}}{N}}=\sum _{{j=1}}^{c}{\frac {O_{{i,j}}}{N}}}$ is the fraction of observations ignoring the column attribute
 * ${\displaystyle p_{{\cdot j}}={\frac {O_{{\cdot j}}}{N}}=\sum _{{i=1}}^{r}{\frac {O_{{i,j}}}{N}}}$ is the fraction of observations ignoring the row attribute
 
-Now we
+The basic idea for the test is to compare the actual counts with the expected counts. So we compute the squared difference between expected and true, divide by the expectation, and sum over all the possible pair of values. This gives us our test statistic:
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -295,11 +296,23 @@ print(f"chi-squared statistic:\t{chi_stat:.4f}")
 print(f"p-value:\t\t{p:.4f}")
 ```
 
-After this step we can finally compute the statistic as follows:
+<!-- $$\chi ^{2}=\sum _{{i=1}}^{{r}}\sum _{{j=1}}^{{c}}{(O_{{i,j}}-E_{{i,j}})^{2} \over E_{{i,j}}}=N\sum _{{i,j}}p_{{i\cdot }}p_{{\cdot j}}\left({\frac  {(O_{{i,j}}/N)-p_{{i\cdot }}p_{{\cdot j}}}{p_{{i\cdot }}p_{{\cdot j}}}}\right)^{2}$$ -->
 
-$$\chi ^{2}=\sum _{{i=1}}^{{r}}\sum _{{j=1}}^{{c}}{(O_{{i,j}}-E_{{i,j}})^{2} \over E_{{i,j}}}=N\sum _{{i,j}}p_{{i\cdot }}p_{{\cdot j}}\left({\frac  {(O_{{i,j}}/N)-p_{{i\cdot }}p_{{\cdot j}}}{p_{{i\cdot }}p_{{\cdot j}}}}\right)^{2}$$
+We then choose a significance for our test $\alpha = 0.5$. Now we need to find the critical value corresponding to our significance level.
 
-We then choose a significance of 0.95 for our test ($\alpha = 0.5$), and draw the distribution with the significance level and the statistics value
+```{code-cell} ipython3
+:tags: [hide-input]
+
+from scipy.stats import chi2
+
+# Choose the significance level and find the critical value
+prob = 0.95
+critical = chi2.ppf(prob, dof)
+
+print(f'critical value: {critical:.4f} (alpha={1-prob:.2f})')
+```
+
+We now need to compare our critical value with our test statistics. We will reject the null hypothesis when we get a test statistic more extreme than our critical value (o a right-tail test, to refuse $\mathcal{H}_0$ we need our test statistic to be greater than the critical value)
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -331,7 +344,7 @@ ax.text(14, 0.02, f"alpha = {1-prob:.4f}", fontsize=18, color='g')
 plt.show()
 ```
 
-Since our p-value is smaller than the $\alpha$ we decided, we end up rejecting the $H_0$, hence, the two random variables are **NOT** independent.
+In the picture above, we see values for the critical value and p-value. The p-value measures how likely we are to observe a test statistic more extreme than what we already observed. Since the p-value is smaller than the critical value we previously set, we end up rejecting the $H_0$, hence, we state that the two random variables are **NOT** independent.
 
 +++
 
@@ -421,11 +434,10 @@ Let's start by defining some important terms that we will need in the following 
 * Learner: The Machine Learning algorithm
 * Domain set: The set of observations that we want to label $\mathcal{X}$ (in our case, the set of session recorded)
 * Label set: The set of possible labels $\mathcal{Y}$ (in our case, $\{0, 1\}$)
-* Training data: A finite sequence of labeled domain points $\displaystyle S = \left( \left(  \mathcal{x}_1, \mathcal{y}_1 \right) \dots \left( \mathcal{x}_m, \mathcal{y}_m \right) \right)$
 * Training data: A finite sequence of labeled domain points $S = \left( \left(  \mathcal{x}_1, \mathcal{y}_1 \right) \dots \left( \mathcal{x}_m, \mathcal{y}_m \right) \right)$
-* Learner's output: The prediction rule obtained by the learner, trained on Training data $\mathcal{h} = \mathcal{X} \rightarrow \mathcal{Y}$ 
+* Learner's output: The prediction rule obtained by the learner, trained on Training data $\mathcal{h} : \mathcal{X} \rightarrow \mathcal{Y}$ 
 * Data-Generating model: The probability distribution $\mathcal{D}$ underlying $\mathcal{X}$ and the *correct* labelling function $\mathcal{f}\ \text{s.t.}\ \mathcal{f}\left(\mathcal{x}_i\right)=\mathcal{y}_i$
-* Measure of success: The error of a prediction rule $\mathcal{h} = \mathcal{X} \rightarrow \mathcal{Y}$  
+* Measure of success: The error of a prediction rule $\mathcal{h} : \mathcal{X} \rightarrow \mathcal{Y}$  
 
 $$L_{\mathcal{D}, f}(h) \stackrel{\text { def }}{=} \underset{x \sim \mathcal{D}}{\mathbb{P}}[h(x) \neq f(x)] \stackrel{\text { def }}{=} \mathcal{D}(\{x: h(x) \neq f(x)\})$$
 
@@ -437,7 +449,9 @@ Meaning that the error of $\mathcal{h}$ is the probability of randomly choosing 
 The goal of our learner (algorithm) is to find the best predictor $h$. The goodness of the predictor is measured by means of the *error*. The main problem is that the error we just defined depends on the true data distribution $\mathcal{D}$ and the labelling function $\mathcal{f}$, and both are not accessible by the learner.
 
 All that our learner sees is the training set *S*, which works like a small window on the real world $D$ that he will never able to experience. For this reason, we are only able to build an approximation of that error, we call it *Empirical Error (Risk)*
+
 $$L_{S}(h) \stackrel{\text { def }}{=} \frac{\left|\left\{i \in[m]: h\left(x_{i}\right) \neq y_{i}\right\}\right|}{m}$$
+
 That is, the ratio of examples in which our rule agrees with with the labelling function. Consequently, we train our learner by minimizing the *Empirical Risk*, a process called **Empirical Risk Minimization (ERM)**
 
 ### 4.3 Overfitting
@@ -483,31 +497,32 @@ $$h_{S}(x)= \begin{cases}y_{i} & \text { if } \exists i \in[m] \text { s.t. } x_
 
 Which essentially is remembering by heart the training samples, and guessing label 0 for every unknown sample. This predictor has *empirical risk* $L_{\mathcal{S}}(h_s) = 0$, for this reason it can be chosen by an ERM algorighm. But if we take a look at the *true risk* (we can do it only because we built the underlying distribution ourselves) is $L_{\mathcal{D}}(h_s) = \frac{1}{2}$
 
-We have found a predictor that performs perfectly on the training set, and very poorly on the true "world".
+We have found a predictor that performs perfectly on the training set, and very poorly on the "true world".
 
 +++
 
 ### 4.4. Recrifying Overfitting
 
-We have just shown that ERM is sensible to overfitting, we will now introduce some conditions to ERM that will guardantee us that if our predictor has good performance on the training set, it is *highly likely* to perform *well* over the underlying data distribution d.
+We have just shown that $\operatorname{ERM}$ is sensible to overfitting, we will now introduce some conditions to $\operatorname{ERM}$ that will guardantee us that if our predictor has good performance on the training set, it is *highly likely* to perform *well* over the underlying data distribution $\mathcal{d}$.
 
 #### 4.4.1 Finite Hypothesis Classes
-A common solution to overfitting is to limit the search space of the ERM. This means choosing an hypothesis class *in advance*, over which the ERM will look for our best predictor *h*
+A common solution to overfitting is to limit the search space of the $\operatorname{ERM}$. This means choosing an hypothesis class *in advance*, over which the $\operatorname{ERM}$ will look for our best predictor *h*
 
 $$h_S = \operatorname{ERM}_{\mathcal{H}}(S) \in \underset{h \in \mathcal{H}}{\operatorname{argmin}} L_{S}(h)$$
 
-We call $\mathcal{H}$ *Hypothesis class*, and our ERM now aims at finding the best $\mathcal{h} \in \mathcal{H}$ that minimizes the $\operatorname{ERM}$. Although this reduces overfitting, we are practically steering our ERM towards a predefinet set of predictors, hence we are introducing a form of bias called *inductive bias*.
+We call $\mathcal{H}$ *Hypothesis class*, and our $\operatorname{ERM}$ now aims at finding the best $\mathcal{h} \in \mathcal{H}$ that minimizes the $\operatorname{ERM}$. Although this reduces overfitting, we are practically steering our $\operatorname{ERM}$ towards a predefinet set of predictors, hence we are introducing a form of bias called *inductive bias*.
 
 #### 4.4.2 Realizability Assumption
+A further assumption that we have to make is the following:
 
 $$\exists \mathcal{h}^* \in \mathcal{h}\ \operatorname{s.t.}\ L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h^*\right)=0$$
 
 This means that there always exists an hypothesis in our finite hypothesis set, for which the True Error is zero. This implies
 1. $\mathcal{D}^{\mathcal{m}}\left(S:L_S\left(h^*\right)=0\right)=1$ with probability 1, over the random samples $S$ sampled according to $\mathcal{D}$, labelled by $\mathcal{f}$, we have that the empirical error of $h^*$ equals 0
-2. $L_S\left(h_S\right)=0$ for every ERM hypothesis, the empirical risk equals 0
+2. $L_S\left(h_S\right)=0$ for every $\operatorname{ERM}$ hypothesis, the empirical risk equals 0
 
 #### 4.4.3 I.I.D. Assumption
-The samples in the training set are *independently and indentically distributed* according to $\mathcal{D}$
+The last assumption is that the samples in the training set are *independently and indentically distributed* according to $\mathcal{D}$
 
 #### 4.4.4 Putting it all together
 Since the training set is random, there is always a (small) probability that our sample is unrepresentative of the underlying $D$, We denote such probability as $\delta$, and call $\left(1-\delta\right)$ the *confidence* of our prediction. Furthermore, since we can not guarantee a perfect prediction, we introduce the *accuracy* $\epsilon$. We now are able to define the failure of our learner as $L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h_S\right) > \epsilon$.
@@ -528,22 +543,34 @@ Recall:
 Consider:
 * The realizability assumption implies that: $L_S\left(h_S\right)=0$ 
 
-This means that $L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon$ can only happend if for some  $h \in \mathcal{H}_B$ we have $L_S\left(h\right)=0$ (this is because the bad hypothesis will be chosen via ERM only if it has empirical error equals 0 for realizability assumption). We can now say that the event above will only happen if our sample is in the set $M$.
+This means that $L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon$ can only happend if for some  $h \in \mathcal{H}_B$ we have $L_S\left(h\right)=0$.
+
+This is because, being the $h_S$ an $\operatorname{ERM}$ hypothesis, it will be chosen if $L_S=0$ (realizability assumption). Now, the only way we are going to have learner's failure ($L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h_S\right) > \epsilon$) is for us to select a misleading sample, since it's the only way our learner will fail, having a 0 empirical risk.
+
+We can now say that the event above will only happen if our sample is in the set $M$ of bad hypothesis.
 
 We have shown that:
+
 $$\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon \} \subseteq M$$
+
 (meaning that the set of samples for which we have learner's failure is bounded by the size of the set of misleading samples)
 
 Hence:
+
 $$\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon \}\right) \leq \mathcal{D^m}\left(M\right)\tag{2}$$
+
 (The probability of picking a sample that brings learner's failure is bounded by the probability of picking a misleading sample)
 
 Consider:
 * The equation $M=\{S|_x:\exists h \in \mathcal{H}_B, L_S\left(h\right)=0\}=\underset{h\in\mathcal{H}_B}{\bigcup}\{S|_x:L_S\left(h\right)=0\}$
 
+(The size of the set $M$ is the union of all those misleading samples that make the bad hypothesis have 0 empirical risk)
+
 Then
 
 $$\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)>\epsilon \}\right)\leq\mathcal{D^m}\left(\underset{h\in\mathcal{H}_B}{\bigcup}\{S|_x:L_S\left(h\right)=0\}\right)\tag{3}$$
+
+(The probability of failure is bounded by the probability of sapling such bad sample)
 
 Consider:
 * The union bound $\mathcal{D}\left(A \cup B\right) \leq \mathcal{D}\left(A\right) +\mathcal{D}\left(B\right)$
@@ -578,7 +605,7 @@ Then, for each individual sampling of an element of the training set we have
 
 $$\mathcal{D}\left(\{\mathcal{x_i}:h\left(\mathcal{x_i}\right)=\mathcal{y_i}\}\right) = 1 - L_\left(\mathcal{D}, \mathcal{f}\right)\left(h\right) \leq 1 - \epsilon$$
 
-Where the last inequation follows from the fact that our $h \in \mathcal{H_B}$
+Where the last inequation follows from the fact that we are condidering only bad hypothesis $h \in \mathcal{H_B}$
 
 Consider:
 * the inequality $\left(1 - \epsilon\right)^m \leq e^{-\epsilon m}$
@@ -602,7 +629,7 @@ $$\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\ri
 
 
 Let 
-* $\mathcal{H} be a finite hypothesis class$
+* $\mathcal{H}$ be a finite hypothesis class
 * $\delta \in \left(0, 1\right) \text{and} \epsilon > 0$
 * $m$ be an integer that satisfies $m \geq \frac{\log (|\mathcal{H}| / \delta)}{\epsilon}$
 
@@ -651,7 +678,7 @@ The above classifier is called *Bayes classifier*, and it is the optimal predict
 
 $$\forall g \ L_\mathcal{D}\left(\mathcal{f_D}\right)\leq L_\mathcal{D}\left(\mathcal{g}\right)$$
 
-However, the *Bayes Risk* can not once more be computed, as it depends on $\mathcal{D}$. Since we can not hope to find a predictor that has a smaller error than the minimal possible (the one of the Bayes classifier), we require that the learning algorithm will find a predictor whose ierror is *not much larger* than the best possible error of a predictor *in some given benchmark hypothesis class*
+However, the *Bayes Risk* can not once more be computed, as it depends on $\mathcal{D}$. Since we can not hope to find a predictor that has a smaller error than the minimal possible (the one of the Bayes classifier), we require that the learning algorithm will find a predictor whose error is *not much larger* than the best possible error of a predictor *in some given benchmark hypothesis class*
 
 ```{admonition} Agnostic PAC Learning 
 :class: important
@@ -741,7 +768,7 @@ We can now say that to ensure that the $\operatorname{ERM}$ rule is an agnorstic
 
 As we introduced $m_\mathcal{H}\left(\delta, \epsilon\right)$ for PAC learning, which told us the minimum sample complexity needed in order to **approximately** have (with confidence $1-\theta$) a **correct** learner (up to an error $\epsilon$), we now introduce 
 
-$$m^{UC}_\mathcal{H}:\left(0, 1\right)^2\rightarrow\mathbb{N}$$ 
+$$m^{UC}_\mathcal{H}:\left(0, 1\right)^2\rightarrow\mathbb{N}$$
 
 
 ```{admonition} Uniform Convergence
@@ -767,6 +794,8 @@ Let $\mathcal{H}$ be a class of $\{0, 1\}$ functions over some domain $\mathcal{
 ```
 
 ```{code-cell} ipython3
+:tags: [hide-input]
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as mpath
@@ -839,7 +868,9 @@ We can now define the VC-Dimension
 ```{admonition} Vapnik-Chervonenkis dimension
 :class: important
 The VC-dimension of a class $\mathcal{H}$ is defined as the size of the maximal shattered set.
-$$\operatorname{VCdim}\left(\mathcal{H}\right)\overset{\operatorname{def}}{=}\underset{A \operatorname{shattered by} \mathcal{H}}{\operatorname{max}} \left\lvert A\right\rvert $$
+
+$$ \operatorname{VCdim}\left(\mathcal{H}\right)\overset{\operatorname{def}}{=}\underset{A \operatorname{shattered by} \mathcal{H}}{\operatorname{max}} \left\lvert A\right\rvert $$
+
 ```
 
 ```{admonition} How to compute VC of $\mathcal{H}$
@@ -852,7 +883,7 @@ $$\operatorname{VCdim}\left(\mathcal{H}\right)\overset{\operatorname{def}}{=}\un
 
 ## 5. K-Fold Cross Validation
 
-The k-fold cross validation technique is designed to provide an accurate estimate of the true error without wasting too much data (as it happens in regular validation techniques). This method consists in dividng the original training dataset of size $m$, into $k$ subsets of size $m/k$. Once for each fold, a fold gets removed from the starting set and used as validation, while the remaining $k-1$ are used to train the model. Finally, the average of the empirical error computed on each fold is computed and considered as the average estimate of the true error. Usually, k-fold is used to perform model selection, and once the final model is found, it is then re-trained on the whole training set.
+The k-fold cross validation technique is designed to provide an accurate estimate of the true error without wasting too much data (as it happens in regular validation techniques). This method consists in dividng the original training dataset of size $m$, into $k$ subsets of size $\frac{m}{k}$. Once for each fold, a fold gets removed from the starting set and used as validation, while the remaining $k-1$ are used to train the model. Finally, the average of the empirical error computed on each fold is computed and considered as the average estimate of the true error. Usually, k-fold is used to perform model selection, and once the final model is found, it is then re-trained on the whole training set.
 
 ```{code-cell} ipython3
 

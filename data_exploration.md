@@ -8,12 +8,13 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.10.3
 kernelspec:
-  display_name: Python 3
+  display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
 
-# Data Exploration
+(chapters:data_exploration)=
+# Data Exploration 
 
 The first step in any Machine Learning pipeline is to get an idea of the data we are going to work with, and its properties. To do so we will use **pandas** library.
 For visualizations instead, we will exploit **matplotlib** and **seaborn** libraries
@@ -279,6 +280,8 @@ fg.axes[0][0].set_xlabel('Revenue')
 plt.tight_layout()
 plt.show()
 ```
+
+Oversampling needs to be carreid out only on *training set*, and not on test set. The reason in that we want to provide our model with the same amount of information of the two classes while training, but we want to test it on the true distribution of the sample, because that is the distribution from which the real world observation will be sampled.
 
 ```{tip}
 To know more about SMOTE and oversampling and what’s really behind it, have a look at the Appendix, or click [here](appendix:oversampling)

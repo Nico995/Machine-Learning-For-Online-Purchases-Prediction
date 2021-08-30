@@ -8,30 +8,28 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.10.3
 kernelspec:
-  display_name: Python 3
+  display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
 
+(chapters:pipelines)=
 # Pipelines
 
 Before getting to our prediction algorithm, our data must go through different processes, in different subsets.
 The order of such processes is often misunderstood.
 For this reason, we are going to start from a picture summing up the whole process, and go through it step by step.
 
-![data_pipeline](images/flowchart.png)
+![data_pipeline](images/flowchart2.png)
 
-1. **Data Cleaning**: Here is where we handle *missing* values from our dataset. In our case we also perform an *Ordinal Encoding*, to ease later steps.
-2. **Data Split**: At this point, we take away a small portion of data and put it aside. This small portion will simulate newly gathered data, and it will be essential to test the generalization power of our final model.
-3. **Training Path**:
-    1. **Oversampling**: We use SMOTE to oversample **only training data**. Since the real world is unbalanced, if we were to balance also the test set, we would cheat, and offer a distorted vision of what our model would expect.
-    2. **Scaling**: Some ML do not have any problem with our data having different scales (i.e. Trees), but some of them do (i.e. SVM). In order to have a unique pipeline that works with every kind of algorithm, we will always apply scaling.
-    2. **One-Hot-Encoding**: Ordinal encoding can put our data on different levels that are not really there (i.e. when mapping colors with numbers, there is no reason of assigning 1 to 'black' or 'white'). For this reason, we apply one-hot-encoding. This will avoid the aforementioned problem, but has the drawback of increasing the dimensionality of our data (creating a sparse encoding matrix).
-
-The horizontal arrows mean that we apply the same process, but we only transform data using statistics computed on the training set. i.e. when performing a normalization (scaling), we scale test data using mean and variance computed on training data.
-
-The missing part of the chart deals with the actual classification task, which we will see in a while.
-Now, let's prepare our data.
+1. **Data**: It is our starting data as we read it from the filesystem.
+2. **Training/Test Split**: We take away a portion of our data, that we will use to test our model at the end of the process. This portion of data must reflect the underlying distribution as good as possible. (Sampling must be stratified to retain proportions).
+3. **Scaling**: We change the range of our data. If this is a *normalization*, we compute the statistics over the training set, and use them to normalize the test set.
+4. **OHE**: We encode our catecorical data into a presence matrix. Again, we build the dictionary of possible values from the training set, and apply it on the test set. Values that are only seen in the test set need to be handled (i.e. dropped, Na)
+5. **SMOTE**: We perform oversampling of our data. **We only perform oversampling on the training dataset**. We need to keep the test set unchanged from the distribution point of view.
+6. **Cross Validation (Model Selection)**: We perform model selection jointly with cross-validation. We evaluate different configuration of the same model on k disjoint subsets of our training sample. We take the configuration with the lowest average error (highest average metric) on the k folds.
+7. **Training**: Now that we discovered our "best" model, we can train it from scratch using the whole training set provided.
+8. **Test**: We assess the generalization power of our model by evaluating it on the test set, which was never shown before to the model.
 
 +++
 
@@ -48,6 +46,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 df = pd.read_csv('./dataset/online_shoppers_intention.csv')
+# Stratified by default
 df_train, df_test = train_test_split(df, test_size=0.2)
 
 x_train, y_train = df_train.drop(columns='Revenue'), df_train['Revenue']
@@ -55,8 +54,12 @@ print(f'training data shape: {df_train.shape}\t\ttest data shape: {df_test.shape
 df.head()
 ```
 
+By default, the *train_test_split* function makes use of the *y* argument to perform stratified sampling. This means that we are sampling out a test set from our starting data, which keeps the class proportions intact. This is of utmost importance since it is the necessary condition to have a valid test score of our model.
+
++++
+
 ## Column Transformer
-For all those actions that require statistics computed column-wise, we use the *ColumnTransformer* object, in which we can insert all those procedures like *Encoding* and *Scaling*.
+For all those actions that require statistics computed column-wise, we use the *ColumnTransformer* object, in which we can insert those procedures like *Encoding* and *Scaling*.
 
 ```{code-cell} ipython3
 from sklearn.compose import ColumnTransformer
@@ -113,11 +116,7 @@ param_grid = [
 
 # And here we put together every piece of the pipeline to create a reusable structure in which we can plug in different
 # Models and transformers without going through the effort of writing again a big bunch of code
-# TODO: uncomment
+# This is commented for time-resource reasons
 # linear_search = GridSearchCV(clf, param_grid, cv=5, n_jobs=6).fit(x_train, y_train)
 # linear_search.cv_results_
-```
-
-```{code-cell} ipython3
-
 ```

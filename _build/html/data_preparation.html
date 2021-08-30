@@ -23,7 +23,7 @@
 
     
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/sphinx-book-theme.e8e5499552300ddf5d7adccae7cc3b70.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.5f77b4aec8189eecf79907ce328c390d.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
@@ -249,25 +249,21 @@
               <div>
                 
   <div class="section" id="pipelines">
-<h1>Pipelines<a class="headerlink" href="#pipelines" title="Permalink to this headline">¶</a></h1>
+<span id="chapters-pipelines"></span><h1>Pipelines<a class="headerlink" href="#pipelines" title="Permalink to this headline">¶</a></h1>
 <p>Before getting to our prediction algorithm, our data must go through different processes, in different subsets.
 The order of such processes is often misunderstood.
 For this reason, we are going to start from a picture summing up the whole process, and go through it step by step.</p>
-<p><img alt="data_pipeline" src="_images/flowchart.png" /></p>
+<p><img alt="data_pipeline" src="_images/flowchart2.png" /></p>
 <ol class="simple">
-<li><p><strong>Data Cleaning</strong>: Here is where we handle <em>missing</em> values from our dataset. In our case we also perform an <em>Ordinal Encoding</em>, to ease later steps.</p></li>
-<li><p><strong>Data Split</strong>: At this point, we take away a small portion of data and put it aside. This small portion will simulate newly gathered data, and it will be essential to test the generalization power of our final model.</p></li>
-<li><p><strong>Training Path</strong>:</p>
-<ol class="simple">
-<li><p><strong>Oversampling</strong>: We use SMOTE to oversample <strong>only training data</strong>. Since the real world is unbalanced, if we were to balance also the test set, we would cheat, and offer a distorted vision of what our model would expect.</p></li>
-<li><p><strong>Scaling</strong>: Some ML do not have any problem with our data having different scales (i.e. Trees), but some of them do (i.e. SVM). In order to have a unique pipeline that works with every kind of algorithm, we will always apply scaling.</p></li>
-<li><p><strong>One-Hot-Encoding</strong>: Ordinal encoding can put our data on different levels that are not really there (i.e. when mapping colors with numbers, there is no reason of assigning 1 to ‘black’ or ‘white’). For this reason, we apply one-hot-encoding. This will avoid the aforementioned problem, but has the drawback of increasing the dimensionality of our data (creating a sparse encoding matrix).</p></li>
+<li><p><strong>Data</strong>: It is our starting data as we read it from the filesystem.</p></li>
+<li><p><strong>Training/Test Split</strong>: We take away a portion of our data, that we will use to test our model at the end of the process. This portion of data must reflect the underlying distribution as good as possible. (Sampling must be stratified to retain proportions).</p></li>
+<li><p><strong>Scaling</strong>: We change the range of our data. If this is a <em>normalization</em>, we compute the statistics over the training set, and use them to normalize the test set.</p></li>
+<li><p><strong>OHE</strong>: We encode our catecorical data into a presence matrix. Again, we build the dictionary of possible values from the training set, and apply it on the test set. Values that are only seen in the test set need to be handled (i.e. dropped, Na)</p></li>
+<li><p><strong>SMOTE</strong>: We perform oversampling of our data. <strong>We only perform oversampling on the training dataset</strong>. We need to keep the test set unchanged from the distribution point of view.</p></li>
+<li><p><strong>Cross Validation (Model Selection)</strong>: We perform model selection jointly with cross-validation. We evaluate different configuration of the same model on k disjoint subsets of our training sample. We take the configuration with the lowest average error (highest average metric) on the k folds.</p></li>
+<li><p><strong>Training</strong>: Now that we discovered our “best” model, we can train it from scratch using the whole training set provided.</p></li>
+<li><p><strong>Test</strong>: We assess the generalization power of our model by evaluating it on the test set, which was never shown before to the model.</p></li>
 </ol>
-</li>
-</ol>
-<p>The horizontal arrows mean that we apply the same process, but we only transform data using statistics computed on the training set. i.e. when performing a normalization (scaling), we scale test data using mean and variance computed on training data.</p>
-<p>The missing part of the chart deals with the actual classification task, which we will see in a while.
-Now, let’s prepare our data.</p>
 <div class="section" id="training-test-dataset-split">
 <h2>Training-Test Dataset Split<a class="headerlink" href="#training-test-dataset-split" title="Permalink to this headline">¶</a></h2>
 <p>To make the code more compact and readable, we are going to use sklearn’s pipeline object to create a reusable pipeline of actions.</p>
@@ -278,6 +274,7 @@ Now, let’s prepare our data.</p>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./dataset/online_shoppers_intention.csv&#39;</span><span class="p">)</span>
+<span class="c1"># Stratified by default</span>
 <span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
 
 <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;Revenue&#39;</span><span class="p">),</span> <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;Revenue&#39;</span><span class="p">]</span>
@@ -438,10 +435,11 @@ Now, let’s prepare our data.</p>
 </table>
 </div></div></div>
 </div>
+<p>By default, the <em>train_test_split</em> function makes use of the <em>y</em> argument to perform stratified sampling. This means that we are sampling out a test set from our starting data, which keeps the class proportions intact. This is of utmost importance since it is the necessary condition to have a valid test score of our model.</p>
 </div>
 <div class="section" id="column-transformer">
 <h2>Column Transformer<a class="headerlink" href="#column-transformer" title="Permalink to this headline">¶</a></h2>
-<p>For all those actions that require statistics computed column-wise, we use the <em>ColumnTransformer</em> object, in which we can insert all those procedures like <em>Encoding</em> and <em>Scaling</em>.</p>
+<p>For all those actions that require statistics computed column-wise, we use the <em>ColumnTransformer</em> object, in which we can insert those procedures like <em>Encoding</em> and <em>Scaling</em>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.compose</span> <span class="kn">import</span> <span class="n">ColumnTransformer</span>
@@ -504,7 +502,7 @@ Now, let’s prepare our data.</p>
 
 <span class="c1"># And here we put together every piece of the pipeline to create a reusable structure in which we can plug in different</span>
 <span class="c1"># Models and transformers without going through the effort of writing again a big bunch of code</span>
-<span class="c1"># TODO: uncomment</span>
+<span class="c1"># This is commented for time-resource reasons</span>
 <span class="c1"># linear_search = GridSearchCV(clf, param_grid, cv=5, n_jobs=6).fit(x_train, y_train)</span>
 <span class="c1"># linear_search.cv_results_</span>
 </pre></div>

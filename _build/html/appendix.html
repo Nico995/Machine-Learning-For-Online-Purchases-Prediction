@@ -23,7 +23,7 @@
 
     
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/sphinx-book-theme.e8e5499552300ddf5d7adccae7cc3b70.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.5f77b4aec8189eecf79907ce328c390d.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
@@ -416,7 +416,7 @@
               <div>
                 
   <div class="section" id="appendix">
-<h1>Appendix<a class="headerlink" href="#appendix" title="Permalink to this headline">¶</a></h1>
+<span id="chapters-appendix"></span><h1>Appendix<a class="headerlink" href="#appendix" title="Permalink to this headline">¶</a></h1>
 <p>In this page we can find further development of concepts used in previous chapters.</p>
 <div class="section" id="violin-plots">
 <span id="appendix-violinplot"></span><h2>1. Violin Plots<a class="headerlink" href="#violin-plots" title="Permalink to this headline">¶</a></h2>
@@ -833,7 +833,7 @@ To carry on the test we must compute the <em>contingency table</em>, counting ea
 <li><p><span class="math notranslate nohighlight">\({\displaystyle p_{{i\cdot }}={\frac {O_{{i\cdot }}}{N}}=\sum _{{j=1}}^{c}{\frac {O_{{i,j}}}{N}}}\)</span> is the fraction of observations ignoring the column attribute</p></li>
 <li><p><span class="math notranslate nohighlight">\({\displaystyle p_{{\cdot j}}={\frac {O_{{\cdot j}}}{N}}=\sum _{{i=1}}^{r}{\frac {O_{{i,j}}}{N}}}\)</span> is the fraction of observations ignoring the row attribute</p></li>
 </ul>
-<p>Now we</p>
+<p>The basic idea for the test is to compare the actual counts with the expected counts. So we compute the squared difference between expected and true, divide by the expectation, and sum over all the possible pair of values. This gives us our test statistic:</p>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">chi2_contingency</span>
@@ -852,10 +852,27 @@ p-value:		0.0012
 </div>
 </div>
 </div>
-<p>After this step we can finally compute the statistic as follows:</p>
-<div class="math notranslate nohighlight">
-\[\chi ^{2}=\sum _{{i=1}}^{{r}}\sum _{{j=1}}^{{c}}{(O_{{i,j}}-E_{{i,j}})^{2} \over E_{{i,j}}}=N\sum _{{i,j}}p_{{i\cdot }}p_{{\cdot j}}\left({\frac  {(O_{{i,j}}/N)-p_{{i\cdot }}p_{{\cdot j}}}{p_{{i\cdot }}p_{{\cdot j}}}}\right)^{2}\]</div>
-<p>We then choose a significance of 0.95 for our test (<span class="math notranslate nohighlight">\(\alpha = 0.5\)</span>), and draw the distribution with the significance level and the statistics value</p>
+<!-- $$\chi ^{2}=\sum _{{i=1}}^{{r}}\sum _{{j=1}}^{{c}}{(O_{{i,j}}-E_{{i,j}})^{2} \over E_{{i,j}}}=N\sum _{{i,j}}p_{{i\cdot }}p_{{\cdot j}}\left({\frac  {(O_{{i,j}}/N)-p_{{i\cdot }}p_{{\cdot j}}}{p_{{i\cdot }}p_{{\cdot j}}}}\right)^{2}$$ -->
+<p>We then choose a significance for our test <span class="math notranslate nohighlight">\(\alpha = 0.5\)</span>. Now we need to find the critical value corresponding to our significance level.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">chi2</span>
+
+<span class="c1"># Choose the significance level and find the critical value</span>
+<span class="n">prob</span> <span class="o">=</span> <span class="mf">0.95</span>
+<span class="n">critical</span> <span class="o">=</span> <span class="n">chi2</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;critical value: </span><span class="si">{</span><span class="n">critical</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1"> (alpha=</span><span class="si">{</span><span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>critical value: 12.5916 (alpha=0.05)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We now need to compare our critical value with our test statistics. We will reject the null hypothesis when we get a test statistic more extreme than our critical value (o a right-tail test, to refuse <span class="math notranslate nohighlight">\(\mathcal{H}_0\)</span> we need our test statistic to be greater than the critical value)</p>
 <div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">chi2</span>
@@ -866,7 +883,7 @@ p-value:		0.0012
 <span class="n">critical</span> <span class="o">=</span> <span class="n">chi2</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
 
 <span class="c1"># Build X axis</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="o">.</span><span class="mi">05</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mf">.05</span><span class="p">)</span>
 
 <span class="c1"># Draw the chi-squared pdf witht he appropriate dof</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">chi2</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">data_crosstab</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data_crosstab</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -887,10 +904,10 @@ p-value:		0.0012
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/appendix_13_0.png" src="_images/appendix_13_0.png" />
+<img alt="_images/appendix_15_0.png" src="_images/appendix_15_0.png" />
 </div>
 </div>
-<p>Since our p-value is smaller than the <span class="math notranslate nohighlight">\(\alpha\)</span> we decided, we end up rejecting the <span class="math notranslate nohighlight">\(H_0\)</span>, hence, the two random variables are <strong>NOT</strong> independent.</p>
+<p>In the picture above, we see values for the critical value and p-value. The p-value measures how likely we are to observe a test statistic more extreme than what we already observed. Since the p-value is smaller than the critical value we previously set, we end up rejecting the <span class="math notranslate nohighlight">\(H_0\)</span>, hence, we state that the two random variables are <strong>NOT</strong> independent.</p>
 </div>
 <div class="section" id="oversampling">
 <span id="appendix-oversampling"></span><h2>3. Oversampling<a class="headerlink" href="#oversampling" title="Permalink to this headline">¶</a></h2>
@@ -958,7 +975,7 @@ Since we are required to deal with continuous features <em>as well as</em> categ
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/appendix_16_0.png" src="_images/appendix_16_0.png" />
+<img alt="_images/appendix_18_0.png" src="_images/appendix_18_0.png" />
 </div>
 </div>
 </div>
@@ -978,11 +995,10 @@ The way the <em>imblearn</em> library does it is by adopting a <em>majority voti
 <li><p>Learner: The Machine Learning algorithm</p></li>
 <li><p>Domain set: The set of observations that we want to label <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> (in our case, the set of session recorded)</p></li>
 <li><p>Label set: The set of possible labels <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span> (in our case, <span class="math notranslate nohighlight">\(\{0, 1\}\)</span>)</p></li>
-<li><p>Training data: A finite sequence of labeled domain points <span class="math notranslate nohighlight">\(\displaystyle S = \left( \left(  \mathcal{x}_1, \mathcal{y}_1 \right) \dots \left( \mathcal{x}_m, \mathcal{y}_m \right) \right)\)</span></p></li>
 <li><p>Training data: A finite sequence of labeled domain points <span class="math notranslate nohighlight">\(S = \left( \left(  \mathcal{x}_1, \mathcal{y}_1 \right) \dots \left( \mathcal{x}_m, \mathcal{y}_m \right) \right)\)</span></p></li>
-<li><p>Learner’s output: The prediction rule obtained by the learner, trained on Training data <span class="math notranslate nohighlight">\(\mathcal{h} = \mathcal{X} \rightarrow \mathcal{Y}\)</span></p></li>
+<li><p>Learner’s output: The prediction rule obtained by the learner, trained on Training data <span class="math notranslate nohighlight">\(\mathcal{h} : \mathcal{X} \rightarrow \mathcal{Y}\)</span></p></li>
 <li><p>Data-Generating model: The probability distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> underlying <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and the <em>correct</em> labelling function <span class="math notranslate nohighlight">\(\mathcal{f}\ \text{s.t.}\ \mathcal{f}\left(\mathcal{x}_i\right)=\mathcal{y}_i\)</span></p></li>
-<li><p>Measure of success: The error of a prediction rule <span class="math notranslate nohighlight">\(\mathcal{h} = \mathcal{X} \rightarrow \mathcal{Y}\)</span></p></li>
+<li><p>Measure of success: The error of a prediction rule <span class="math notranslate nohighlight">\(\mathcal{h} : \mathcal{X} \rightarrow \mathcal{Y}\)</span></p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[L_{\mathcal{D}, f}(h) \stackrel{\text { def }}{=} \underset{x \sim \mathcal{D}}{\mathbb{P}}[h(x) \neq f(x)] \stackrel{\text { def }}{=} \mathcal{D}(\{x: h(x) \neq f(x)\})\]</div>
@@ -991,9 +1007,10 @@ The way the <em>imblearn</em> library does it is by adopting a <em>majority voti
 <div class="section" id="the-empirical-risk">
 <h3>4.2 The Empirical Risk<a class="headerlink" href="#the-empirical-risk" title="Permalink to this headline">¶</a></h3>
 <p>The goal of our learner (algorithm) is to find the best predictor <span class="math notranslate nohighlight">\(h\)</span>. The goodness of the predictor is measured by means of the <em>error</em>. The main problem is that the error we just defined depends on the true data distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> and the labelling function <span class="math notranslate nohighlight">\(\mathcal{f}\)</span>, and both are not accessible by the learner.</p>
-<p>All that our learner sees is the training set <em>S</em>, which works like a small window on the real world <span class="math notranslate nohighlight">\(D\)</span> that he will never able to experience. For this reason, we are only able to build an approximation of that error, we call it <em>Empirical Error (Risk)</em>
-$<span class="math notranslate nohighlight">\(L_{S}(h) \stackrel{\text { def }}{=} \frac{\left|\left\{i \in[m]: h\left(x_{i}\right) \neq y_{i}\right\}\right|}{m}\)</span>$
-That is, the ratio of examples in which our rule agrees with with the labelling function. Consequently, we train our learner by minimizing the <em>Empirical Risk</em>, a process called <strong>Empirical Risk Minimization (ERM)</strong></p>
+<p>All that our learner sees is the training set <em>S</em>, which works like a small window on the real world <span class="math notranslate nohighlight">\(D\)</span> that he will never able to experience. For this reason, we are only able to build an approximation of that error, we call it <em>Empirical Error (Risk)</em></p>
+<div class="math notranslate nohighlight">
+\[L_{S}(h) \stackrel{\text { def }}{=} \frac{\left|\left\{i \in[m]: h\left(x_{i}\right) \neq y_{i}\right\}\right|}{m}\]</div>
+<p>That is, the ratio of examples in which our rule agrees with with the labelling function. Consequently, we train our learner by minimizing the <em>Empirical Risk</em>, a process called <strong>Empirical Risk Minimization (ERM)</strong></p>
 </div>
 <div class="section" id="overfitting">
 <h3>4.3 Overfitting<a class="headerlink" href="#overfitting" title="Permalink to this headline">¶</a></h3>
@@ -1030,7 +1047,7 @@ That is, the ratio of examples in which our rule agrees with with the labelling 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/appendix_21_0.png" src="_images/appendix_21_0.png" />
+<img alt="_images/appendix_23_0.png" src="_images/appendix_23_0.png" />
 </div>
 </div>
 <p>Let’s imagine a bivariate dataset, where the <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> is the uniform distribution in the blue circle, and the labelling function <span class="math notranslate nohighlight">\(\mathcal{f}\)</span> determines the label to be 1 if the sample falls inside the red circle, 0 otherwise. (Note that the area of the red circle is <span class="math notranslate nohighlight">\(\pi\)</span> while the area of the blue circle is <span class="math notranslate nohighlight">\(2\pi\)</span>)</p>
@@ -1038,31 +1055,32 @@ That is, the ratio of examples in which our rule agrees with with the labelling 
 <div class="math notranslate nohighlight">
 \[\begin{split}h_{S}(x)= \begin{cases}y_{i} &amp; \text { if } \exists i \in[m] \text { s.t. } x_{i}=x \\ 0 &amp; \text { otherwise. }\end{cases}\end{split}\]</div>
 <p>Which essentially is remembering by heart the training samples, and guessing label 0 for every unknown sample. This predictor has <em>empirical risk</em> <span class="math notranslate nohighlight">\(L_{\mathcal{S}}(h_s) = 0\)</span>, for this reason it can be chosen by an ERM algorighm. But if we take a look at the <em>true risk</em> (we can do it only because we built the underlying distribution ourselves) is <span class="math notranslate nohighlight">\(L_{\mathcal{D}}(h_s) = \frac{1}{2}\)</span></p>
-<p>We have found a predictor that performs perfectly on the training set, and very poorly on the true “world”.</p>
+<p>We have found a predictor that performs perfectly on the training set, and very poorly on the “true world”.</p>
 </div>
 <div class="section" id="recrifying-overfitting">
 <h3>4.4. Recrifying Overfitting<a class="headerlink" href="#recrifying-overfitting" title="Permalink to this headline">¶</a></h3>
-<p>We have just shown that ERM is sensible to overfitting, we will now introduce some conditions to ERM that will guardantee us that if our predictor has good performance on the training set, it is <em>highly likely</em> to perform <em>well</em> over the underlying data distribution d.</p>
+<p>We have just shown that <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> is sensible to overfitting, we will now introduce some conditions to <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> that will guardantee us that if our predictor has good performance on the training set, it is <em>highly likely</em> to perform <em>well</em> over the underlying data distribution <span class="math notranslate nohighlight">\(\mathcal{d}\)</span>.</p>
 <div class="section" id="finite-hypothesis-classes">
 <h4>4.4.1 Finite Hypothesis Classes<a class="headerlink" href="#finite-hypothesis-classes" title="Permalink to this headline">¶</a></h4>
-<p>A common solution to overfitting is to limit the search space of the ERM. This means choosing an hypothesis class <em>in advance</em>, over which the ERM will look for our best predictor <em>h</em></p>
+<p>A common solution to overfitting is to limit the search space of the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span>. This means choosing an hypothesis class <em>in advance</em>, over which the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> will look for our best predictor <em>h</em></p>
 <div class="math notranslate nohighlight">
 \[h_S = \operatorname{ERM}_{\mathcal{H}}(S) \in \underset{h \in \mathcal{H}}{\operatorname{argmin}} L_{S}(h)\]</div>
-<p>We call <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> <em>Hypothesis class</em>, and our ERM now aims at finding the best <span class="math notranslate nohighlight">\(\mathcal{h} \in \mathcal{H}\)</span> that minimizes the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span>. Although this reduces overfitting, we are practically steering our ERM towards a predefinet set of predictors, hence we are introducing a form of bias called <em>inductive bias</em>.</p>
+<p>We call <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> <em>Hypothesis class</em>, and our <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> now aims at finding the best <span class="math notranslate nohighlight">\(\mathcal{h} \in \mathcal{H}\)</span> that minimizes the <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span>. Although this reduces overfitting, we are practically steering our <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> towards a predefinet set of predictors, hence we are introducing a form of bias called <em>inductive bias</em>.</p>
 </div>
 <div class="section" id="realizability-assumption">
 <h4>4.4.2 Realizability Assumption<a class="headerlink" href="#realizability-assumption" title="Permalink to this headline">¶</a></h4>
+<p>A further assumption that we have to make is the following:</p>
 <div class="math notranslate nohighlight">
 \[\exists \mathcal{h}^* \in \mathcal{h}\ \operatorname{s.t.}\ L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h^*\right)=0\]</div>
 <p>This means that there always exists an hypothesis in our finite hypothesis set, for which the True Error is zero. This implies</p>
 <ol class="simple">
 <li><p><span class="math notranslate nohighlight">\(\mathcal{D}^{\mathcal{m}}\left(S:L_S\left(h^*\right)=0\right)=1\)</span> with probability 1, over the random samples <span class="math notranslate nohighlight">\(S\)</span> sampled according to <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>, labelled by <span class="math notranslate nohighlight">\(\mathcal{f}\)</span>, we have that the empirical error of <span class="math notranslate nohighlight">\(h^*\)</span> equals 0</p></li>
-<li><p><span class="math notranslate nohighlight">\(L_S\left(h_S\right)=0\)</span> for every ERM hypothesis, the empirical risk equals 0</p></li>
+<li><p><span class="math notranslate nohighlight">\(L_S\left(h_S\right)=0\)</span> for every <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> hypothesis, the empirical risk equals 0</p></li>
 </ol>
 </div>
 <div class="section" id="i-i-d-assumption">
 <h4>4.4.3 I.I.D. Assumption<a class="headerlink" href="#i-i-d-assumption" title="Permalink to this headline">¶</a></h4>
-<p>The samples in the training set are <em>independently and indentically distributed</em> according to <span class="math notranslate nohighlight">\(\mathcal{D}\)</span></p>
+<p>The last assumption is that the samples in the training set are <em>independently and indentically distributed</em> according to <span class="math notranslate nohighlight">\(\mathcal{D}\)</span></p>
 </div>
 <div class="section" id="putting-it-all-together">
 <h4>4.4.4 Putting it all together<a class="headerlink" href="#putting-it-all-together" title="Permalink to this headline">¶</a></h4>
@@ -1084,20 +1102,26 @@ That is, the ratio of examples in which our rule agrees with with the labelling 
 <ul class="simple">
 <li><p>The realizability assumption implies that: <span class="math notranslate nohighlight">\(L_S\left(h_S\right)=0\)</span></p></li>
 </ul>
-<p>This means that <span class="math notranslate nohighlight">\(L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon\)</span> can only happend if for some  <span class="math notranslate nohighlight">\(h \in \mathcal{H}_B\)</span> we have <span class="math notranslate nohighlight">\(L_S\left(h\right)=0\)</span> (this is because the bad hypothesis will be chosen via ERM only if it has empirical error equals 0 for realizability assumption). We can now say that the event above will only happen if our sample is in the set <span class="math notranslate nohighlight">\(M\)</span>.</p>
-<p>We have shown that:
-$<span class="math notranslate nohighlight">\(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \} \subseteq M\)</span>$
-(meaning that the set of samples for which we have learner’s failure is bounded by the size of the set of misleading samples)</p>
-<p>Hence:
-$<span class="math notranslate nohighlight">\(\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \}\right) \leq \mathcal{D^m}\left(M\right)\tag{2}\)</span>$
-(The probability of picking a sample that brings learner’s failure is bounded by the probability of picking a misleading sample)</p>
+<p>This means that <span class="math notranslate nohighlight">\(L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon\)</span> can only happend if for some  <span class="math notranslate nohighlight">\(h \in \mathcal{H}_B\)</span> we have <span class="math notranslate nohighlight">\(L_S\left(h\right)=0\)</span>.</p>
+<p>This is because, being the <span class="math notranslate nohighlight">\(h_S\)</span> an <span class="math notranslate nohighlight">\(\operatorname{ERM}\)</span> hypothesis, it will be chosen if <span class="math notranslate nohighlight">\(L_S=0\)</span> (realizability assumption). Now, the only way we are going to have learner’s failure (<span class="math notranslate nohighlight">\(L_{\left(\mathcal{D}, \mathcal{f}\right)}\left(h_S\right) &gt; \epsilon\)</span>) is for us to select a misleading sample, since it’s the only way our learner will fail, having a 0 empirical risk.</p>
+<p>We can now say that the event above will only happen if our sample is in the set <span class="math notranslate nohighlight">\(M\)</span> of bad hypothesis.</p>
+<p>We have shown that:</p>
+<div class="math notranslate nohighlight">
+\[\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \} \subseteq M\]</div>
+<p>(meaning that the set of samples for which we have learner’s failure is bounded by the size of the set of misleading samples)</p>
+<p>Hence:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \}\right) \leq \mathcal{D^m}\left(M\right)\tag{2}\]</div>
+<p>(The probability of picking a sample that brings learner’s failure is bounded by the probability of picking a misleading sample)</p>
 <p>Consider:</p>
 <ul class="simple">
 <li><p>The equation <span class="math notranslate nohighlight">\(M=\{S|_x:\exists h \in \mathcal{H}_B, L_S\left(h\right)=0\}=\underset{h\in\mathcal{H}_B}{\bigcup}\{S|_x:L_S\left(h\right)=0\}\)</span></p></li>
 </ul>
+<p>(The size of the set <span class="math notranslate nohighlight">\(M\)</span> is the union of all those misleading samples that make the bad hypothesis have 0 empirical risk)</p>
 <p>Then</p>
 <div class="math notranslate nohighlight">
 \[\mathcal{D^m}\left(\{S|_x:L_{\left(\mathcal{D},\mathcal{f}\right)}\left(h_S\right)&gt;\epsilon \}\right)\leq\mathcal{D^m}\left(\underset{h\in\mathcal{H}_B}{\bigcup}\{S|_x:L_S\left(h\right)=0\}\right)\tag{3}\]</div>
+<p>(The probability of failure is bounded by the probability of sapling such bad sample)</p>
 <p>Consider:</p>
 <ul class="simple">
 <li><p>The union bound <span class="math notranslate nohighlight">\(\mathcal{D}\left(A \cup B\right) \leq \mathcal{D}\left(A\right) +\mathcal{D}\left(B\right)\)</span></p></li>
@@ -1131,7 +1155,7 @@ $<span class="math notranslate nohighlight">\(\mathcal{D^m}\left(\{S|_x:L_{\left
 <p>Then, for each individual sampling of an element of the training set we have</p>
 <div class="math notranslate nohighlight">
 \[\mathcal{D}\left(\{\mathcal{x_i}:h\left(\mathcal{x_i}\right)=\mathcal{y_i}\}\right) = 1 - L_\left(\mathcal{D}, \mathcal{f}\right)\left(h\right) \leq 1 - \epsilon\]</div>
-<p>Where the last inequation follows from the fact that our <span class="math notranslate nohighlight">\(h \in \mathcal{H_B}\)</span></p>
+<p>Where the last inequation follows from the fact that we are condidering only bad hypothesis <span class="math notranslate nohighlight">\(h \in \mathcal{H_B}\)</span></p>
 <p>Consider:</p>
 <ul class="simple">
 <li><p>the inequality <span class="math notranslate nohighlight">\(\left(1 - \epsilon\right)^m \leq e^{-\epsilon m}\)</span></p></li>
@@ -1152,7 +1176,7 @@ $<span class="math notranslate nohighlight">\(\mathcal{D^m}\left(\{S|_x:L_{\left
 <p><strong>—</strong></p>
 <p>Let</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\mathcal{H} be a finite hypothesis class\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{H}\)</span> be a finite hypothesis class</p></li>
 <li><p><span class="math notranslate nohighlight">\(\delta \in \left(0, 1\right) \text{and} \epsilon &gt; 0\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(m\)</span> be an integer that satisfies <span class="math notranslate nohighlight">\(m \geq \frac{\log (|\mathcal{H}| / \delta)}{\epsilon}\)</span></p></li>
 </ul>
@@ -1195,7 +1219,7 @@ $<span class="math notranslate nohighlight">\(\mathcal{D^m}\left(\{S|_x:L_{\left
 <p>The above classifier is called <em>Bayes classifier</em>, and it is the optimal predictor for every <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>, formally</p>
 <div class="math notranslate nohighlight">
 \[\forall g \ L_\mathcal{D}\left(\mathcal{f_D}\right)\leq L_\mathcal{D}\left(\mathcal{g}\right)\]</div>
-<p>However, the <em>Bayes Risk</em> can not once more be computed, as it depends on <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>. Since we can not hope to find a predictor that has a smaller error than the minimal possible (the one of the Bayes classifier), we require that the learning algorithm will find a predictor whose ierror is <em>not much larger</em> than the best possible error of a predictor <em>in some given benchmark hypothesis class</em></p>
+<p>However, the <em>Bayes Risk</em> can not once more be computed, as it depends on <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>. Since we can not hope to find a predictor that has a smaller error than the minimal possible (the one of the Bayes classifier), we require that the learning algorithm will find a predictor whose error is <em>not much larger</em> than the best possible error of a predictor <em>in some given benchmark hypothesis class</em></p>
 <div class="important admonition">
 <p class="admonition-title">Agnostic PAC Learning</p>
 <p>A hypothesis class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is <strong>agnostic</strong> PAC learnable if there exists a function <span class="math notranslate nohighlight">\(m_{\mathcal{H}}:(0,1)^{2} \rightarrow \mathbb{N}\)</span> and a learning algorithm that has the following property: <span class="math notranslate nohighlight">\(\forall \epsilon,\theta\in\left(0, 1\right), \forall \mathcal{D}\sim\mathcal{X}\times\mathcal{Y}\)</span>, when running the learning algorithm on <span class="math notranslate nohighlight">\(m \geq m_\mathcal{H}\left(\epsilon,\delta\right)\)</span> i.i.d. samples generated by <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> the algorighm returns a hypothesis <span class="math notranslate nohighlight">\(h\)</span> such that, with probability of at least <span class="math notranslate nohighlight">\(1-\delta\)</span></p>
@@ -1293,7 +1317,7 @@ the choice of the m training examples)</p>
 <p class="admonition-title">Shattering</p>
 <p>Let <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> be a class of <span class="math notranslate nohighlight">\(\{0, 1\}\)</span> functions over some domain <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and let <span class="math notranslate nohighlight">\(A\subseteq\mathcal{X}\)</span>. We say that <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> shatters <span class="math notranslate nohighlight">\(A\)</span> if <span class="math notranslate nohighlight">\(\forall \mathcal{g}:A\rightarrow\{0, 1\} \exists h\in\mathcal{H}\ \operatorname{s.t.}\ \forall \mathcal{x} \in A,\ h\left(\mathcal{x}\right) = g\left(\mathcal{x}\right)\)</span></p>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_hide-input docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
@@ -1344,7 +1368,7 @@ the choice of the m training examples)</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/appendix_25_0.png" src="_images/appendix_25_0.png" />
+<img alt="_images/appendix_27_0.png" src="_images/appendix_27_0.png" />
 </div>
 </div>
 <p>In the figure above we can see a (green) function <span class="math notranslate nohighlight">\(\mathcal{g}:A\rightarrow\{0, 1\}\)</span> that represents a <span class="math notranslate nohighlight">\(\{0, 1\}\)</span> behaviour over <span class="math notranslate nohighlight">\(A\)</span>. And a function <span class="math notranslate nohighlight">\(h\)</span> defined over the domain <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> that agrees with the function <span class="math notranslate nohighlight">\(g\)</span> over the set of points <span class="math notranslate nohighlight">\(A\)</span>.</p>
@@ -1364,8 +1388,9 @@ the choice of the m training examples)</p>
 <p>We can now define the VC-Dimension</p>
 <div class="important admonition">
 <p class="admonition-title">Vapnik-Chervonenkis dimension</p>
-<p>The VC-dimension of a class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is defined as the size of the maximal shattered set.
-$<span class="math notranslate nohighlight">\(\operatorname{VCdim}\left(\mathcal{H}\right)\overset{\operatorname{def}}{=}\underset{A \operatorname{shattered by} \mathcal{H}}{\operatorname{max}} \left\lvert A\right\rvert \)</span>$</p>
+<p>The VC-dimension of a class <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is defined as the size of the maximal shattered set.</p>
+<div class="math notranslate nohighlight">
+\[ \operatorname{VCdim}\left(\mathcal{H}\right)\overset{\operatorname{def}}{=}\underset{A \operatorname{shattered by} \mathcal{H}}{\operatorname{max}} \left\lvert A\right\rvert \]</div>
 </div>
 <div class="note admonition">
 <p class="admonition-title">How to compute VC of <span class="math notranslate nohighlight">\(\mathcal{H}\)</span></p>

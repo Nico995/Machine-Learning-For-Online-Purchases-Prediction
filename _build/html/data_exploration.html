@@ -23,7 +23,7 @@
 
     
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/sphinx-book-theme.e8e5499552300ddf5d7adccae7cc3b70.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.5f77b4aec8189eecf79907ce328c390d.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
@@ -289,7 +289,7 @@
               <div>
                 
   <div class="section" id="data-exploration">
-<h1>Data Exploration<a class="headerlink" href="#data-exploration" title="Permalink to this headline">¶</a></h1>
+<span id="chapters-data-exploration"></span><h1>Data Exploration<a class="headerlink" href="#data-exploration" title="Permalink to this headline">¶</a></h1>
 <p>The first step in any Machine Learning pipeline is to get an idea of the data we are going to work with, and its properties. To do so we will use <strong>pandas</strong> library.
 For visualizations instead, we will exploit <strong>matplotlib</strong> and <strong>seaborn</strong> libraries</p>
 <div class="cell docutils container">
@@ -864,6 +864,7 @@ Both techniques are based on the same oversampling algorithm:</p>
 <img alt="_images/data_exploration_17_0.png" src="_images/data_exploration_17_0.png" />
 </div>
 </div>
+<p>Oversampling needs to be carreid out only on <em>training set</em>, and not on test set. The reason in that we want to provide our model with the same amount of information of the two classes while training, but we want to test it on the true distribution of the sample, because that is the distribution from which the real world observation will be sampled.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>To know more about SMOTE and oversampling and what’s really behind it, have a look at the Appendix, or click <a class="reference internal" href="appendix.html#appendix-oversampling"><span class="std std-ref">here</span></a></p>
