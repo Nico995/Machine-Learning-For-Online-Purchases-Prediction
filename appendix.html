@@ -1402,7 +1402,7 @@ the choice of the m training examples)</p>
 </div>
 </div>
 <div class="section" id="k-fold-cross-validation">
-<h2>5. K-Fold Cross Validation<a class="headerlink" href="#k-fold-cross-validation" title="Permalink to this headline">¶</a></h2>
+<span id="appendix-gridsearchcv"></span><h2>5. K-Fold Cross Validation<a class="headerlink" href="#k-fold-cross-validation" title="Permalink to this headline">¶</a></h2>
 <p>The k-fold cross validation technique is designed to provide an accurate estimate of the true error without wasting too much data (as it happens in regular validation techniques). This method consists in dividng the original training dataset of size <span class="math notranslate nohighlight">\(m\)</span>, into <span class="math notranslate nohighlight">\(k\)</span> subsets of size <span class="math notranslate nohighlight">\(\frac{m}{k}\)</span>. Once for each fold, a fold gets removed from the starting set and used as validation, while the remaining <span class="math notranslate nohighlight">\(k-1\)</span> are used to train the model. Finally, the average of the empirical error computed on each fold is computed and considered as the average estimate of the true error. Usually, k-fold is used to perform model selection, and once the final model is found, it is then re-trained on the whole training set.</p>
 </div>
 </div>

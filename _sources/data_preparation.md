@@ -8,7 +8,7 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.10.3
 kernelspec:
-  display_name: Python 3 (ipykernel)
+  display_name: Python 3
   language: python
   name: python3
 ---
@@ -119,4 +119,8 @@ param_grid = [
 # This is commented for time-resource reasons
 # linear_search = GridSearchCV(clf, param_grid, cv=5, n_jobs=6).fit(x_train, y_train)
 # linear_search.cv_results_
+```
+
+```{tip}
+To know more about Grid Search & Cross Validation and what's really behind it, have a look at the Appendix, or click [here](appendix:gridsearchcv)
 ```

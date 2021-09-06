@@ -8,7 +8,7 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.10.3
 kernelspec:
-  display_name: Python 3 (ipykernel)
+  display_name: Python 3
   language: python
   name: python3
 ---
@@ -881,10 +881,7 @@ $$ \operatorname{VCdim}\left(\mathcal{H}\right)\overset{\operatorname{def}}{=}\u
 
 +++
 
+(appendix:gridsearchcv)=
 ## 5. K-Fold Cross Validation
 
 The k-fold cross validation technique is designed to provide an accurate estimate of the true error without wasting too much data (as it happens in regular validation techniques). This method consists in dividng the original training dataset of size $m$, into $k$ subsets of size $\frac{m}{k}$. Once for each fold, a fold gets removed from the starting set and used as validation, while the remaining $k-1$ are used to train the model. Finally, the average of the empirical error computed on each fold is computed and considered as the average estimate of the true error. Usually, k-fold is used to perform model selection, and once the final model is found, it is then re-trained on the whole training set.
-
-```{code-cell} ipython3
-
-```
